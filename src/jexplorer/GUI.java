@@ -9,8 +9,10 @@ public class GUI {
     private final int HEIGHT_FRM = 850;
 
     private final JFrame frm;
+    private JPanel content;
 
     private TileExplorerPane tileExplorerPane;
+    private RootPointExplorerPane rootPointExplorerPane;
 
     public GUI() {
 
@@ -32,14 +34,27 @@ public class GUI {
         int yPos = Toolkit.getDefaultToolkit().getScreenSize().height / 2 - HEIGHT_FRM / 2;
         frm.setLocation(xPos, yPos);
 
-        createTileExplorerPane();
+        content=new JPanel();
+        content.setLayout(new BorderLayout(5,5));
+        content.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
+        createTileExplorerPane();
+        createRootPointPane();
+
+        frm.setContentPane(content);
         frm.setVisible(true);
     }
 
     private void createTileExplorerPane(){
         tileExplorerPane=new TileExplorerPane();
-        frm.add(tileExplorerPane.getVisualComponent(),BorderLayout.CENTER);
+        content.add(tileExplorerPane.getVisualComponent(),BorderLayout.CENTER);
+    }
+
+    private void createRootPointPane(){
+        rootPointExplorerPane=new RootPointExplorerPane();
+        Component component=rootPointExplorerPane.getVisualComponent();
+        component.setPreferredSize(new Dimension(WIDTH_FRM/8,(int) (HEIGHT_FRM*0.9)));
+        content.add(component,BorderLayout.WEST);
     }
 
 }

@@ -134,7 +134,6 @@ public class TileExplorerPane {
         return scrollPane;
     }
 
-    //Метод запоняет панель контента элементами
     public void setContent(FileSystemElement[] elements) {
         //Сперва очищаем панель контента от прежних элементов
         clearContentPane();
@@ -145,6 +144,7 @@ public class TileExplorerPane {
         for (FileSystemElement element : elements) {
             content[i] = new JLabel();
             content[i].setText(element.name);
+            content[i].setToolTipText(element.toolTipText);
             if (currentLayout.isBigCells()){
                 content[i].setIcon(new ImageIcon("res\\tileView\\folder_big.png"));
             }
@@ -153,7 +153,7 @@ public class TileExplorerPane {
             }
             content[i].setHorizontalTextPosition(SwingConstants.CENTER);
             content[i].setVerticalTextPosition(SwingConstants.BOTTOM);
-            content[i].setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            content[i].setHorizontalAlignment(SwingConstants.CENTER);
             content[i].setBackground(backColor);
             contentPane.add(content[i]);
             i++;
@@ -168,4 +168,5 @@ public class TileExplorerPane {
             contentPane.remove(component);
         }
     }
+
 }
