@@ -2,16 +2,19 @@ package jexplorer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class TileExplorerPane extends JScrollPane {
 
     private JPanel contentPane;
     private JLabel[] content;
+    private AdaptiveGridLayout currentLayout;
 
     class AdaptiveGridLayout implements LayoutManager {
 
-        static final int BIG_CELLS=1;
-        static final int SMALL_CELLS=2;
+        static final int BIG_CELLS = 1;
+        static final int SMALL_CELLS = 2;
 
         private final int WIDTH_BIG_CELL = 120;
         private final int HEIGHT_BIG_CELL = 120;
@@ -19,6 +22,7 @@ public class TileExplorerPane extends JScrollPane {
         private final int WIDTH_SMALL_CELL = 80;
         private final int HEIGHT_SMALL_CELL = 80;
 
+        private int currentSizeCell;
         private int currentWidthCell;
         private int currentHeightCell;
 
@@ -26,17 +30,26 @@ public class TileExplorerPane extends JScrollPane {
             setSizeCells(sizeCells);
         }
 
-        public void setSizeCells(int sizeCells){
-            if (sizeCells==BIG_CELLS){
-                currentWidthCell=WIDTH_BIG_CELL;
-                currentHeightCell=HEIGHT_BIG_CELL;
+        public void setSizeCells(int sizeCells) {
+            currentSizeCell = sizeCells;
+            if (sizeCells == BIG_CELLS) {
+                currentWidthCell = WIDTH_BIG_CELL;
+                currentHeightCell = HEIGHT_BIG_CELL;
                 return;
             }
-            if (sizeCells==SMALL_CELLS){
-                currentWidthCell=WIDTH_SMALL_CELL;
-                currentHeightCell=HEIGHT_SMALL_CELL;
+            if (sizeCells == SMALL_CELLS) {
+                currentWidthCell = WIDTH_SMALL_CELL;
+                currentHeightCell = HEIGHT_SMALL_CELL;
                 return;
             }
+        }
+
+        public boolean isBigCells(){
+            return currentSizeCell==BIG_CELLS;
+        }
+
+        public boolean isSmallCells(){
+            return currentSizeCell==SMALL_CELLS;
         }
 
         @Override
@@ -54,13 +67,13 @@ public class TileExplorerPane extends JScrollPane {
 
             prefWidth = getXCellCount() * currentWidthCell;
 
-            prefHeightCells = parent.getComponentCount()/getXCellCount();
-            if (prefHeightCells==0)prefHeightCells=1;
-            if ((prefHeightCells*getXCellCount())<parent.getComponentCount())prefHeightCells++;
+            prefHeightCells = parent.getComponentCount() / getXCellCount();
+            if (prefHeightCells == 0) prefHeightCells = 1;
+            if ((prefHeightCells * getXCellCount()) < parent.getComponentCount()) prefHeightCells++;
 
-            prefHeight=prefHeightCells* currentHeightCell;
+            prefHeight = prefHeightCells * currentHeightCell;
 
-            return new Dimension(prefWidth,prefHeight);
+            return new Dimension(prefWidth, prefHeight);
         }
 
         @Override
@@ -95,14 +108,43 @@ public class TileExplorerPane extends JScrollPane {
     }
 
     public TileExplorerPane() {
-        contentPane=new JPanel();
-        contentPane.setLayout(new AdaptiveGridLayout(AdaptiveGridLayout.BIG_CELLS));
+        contentPane = new JPanel();
+        currentLayout = new AdaptiveGridLayout(AdaptiveGridLayout.BIG_CELLS);
+        contentPane.setLayout(currentLayout);
         add(contentPane);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                revalidate();
+            }
+        });
     }
 
     //Метод запоняет панель контента элементами
-    public void setContent(FileSystemElement[] elements){
+    public void setContent(FileSystemElement[] elements) {
+        //Предварительно очищаем панель контента от прежних элементов
+        clearContentPane();
 
+        //Добавляем на панель контента новые элементы
+        content = new JLabel[elements.length];
+        int i = 0;
+        for (FileSystemElement element : elements) {
+            content[i] = new JLabel();
+            content[i].setText(element.name);
+            if (currentLayout.isBigCells()){
+                content[i].setIcon(new ImageIcon("res\\tileView\\folder_big.png"));
+            }
+            if (currentLayout.isSmallCells()){
+                content[i].setIcon(new ImageIcon("res\\tileView\\folder_small.png"));
+            }
+        }
+    }
 
+    private void clearContentPane() {
+        if (contentPane.getComponentCount() == 0) return;
+        Component[] components = contentPane.getComponents();
+        for (Component component : components) {
+            contentPane.remove(component);
+        }
     }
 }
