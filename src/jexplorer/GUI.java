@@ -39,7 +39,7 @@ public class GUI {
 
     private void createTileExplorerPane(){
         tileExplorerPane=new TileExplorerPane();
-        frm.add(tileExplorerPane,BorderLayout.CENTER);
+        frm.add(tileExplorerPane.getVisualComponent(),BorderLayout.CENTER);
     }
 
 }

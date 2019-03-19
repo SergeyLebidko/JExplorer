@@ -4,14 +4,26 @@ import java.io.File;
 
 public class FileSystemExplorer {
 
-    private File currentPath;
+    private File currentDirectory;
 
     public FileSystemExplorer() {
         String pathToUserHome;
         pathToUserHome=System.getProperty("user.home");
-        currentPath=new File(pathToUserHome);
+        currentDirectory =new File(pathToUserHome);
+    }
 
-        System.out.println(currentPath);
+    //Метод возвращает список элементов (файлов и папок) текущего каталога
+    public FileSystemElement[] getCurrentElementsList(){
+        FileSystemElement[] result;
+
+        //Код-заглушка. Должен быть удален
+        result=new FileSystemElement[100];
+        for (int i=0;i<100;i++){
+            result[i]=new FileSystemElement();
+            result[i].name="Элемент №"+i;
+        }
+
+        return result;
     }
 
 }

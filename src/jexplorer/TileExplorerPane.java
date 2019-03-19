@@ -5,11 +5,15 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-public class TileExplorerPane extends JScrollPane {
+public class TileExplorerPane {
 
+    private JScrollPane scrollPane;
     private JPanel contentPane;
     private JLabel[] content;
     private AdaptiveGridLayout currentLayout;
+    private FileSystemExplorer fileSystemExplorer;
+
+    private final Color backColor=Color.WHITE;
 
     class AdaptiveGridLayout implements LayoutManager {
 
@@ -70,7 +74,6 @@ public class TileExplorerPane extends JScrollPane {
             prefHeightCells = parent.getComponentCount() / getXCellCount();
             if (prefHeightCells == 0) prefHeightCells = 1;
             if ((prefHeightCells * getXCellCount()) < parent.getComponentCount()) prefHeightCells++;
-
             prefHeight = prefHeightCells * currentHeightCell;
 
             return new Dimension(prefWidth, prefHeight);
@@ -100,7 +103,7 @@ public class TileExplorerPane extends JScrollPane {
 
         //Метод возвращает количество компонентов, которе можно расположить в ряд при данном размере контейнера
         private int getXCellCount() {
-            int result = TileExplorerPane.this.getViewport().getWidth() / currentWidthCell;
+            int result = scrollPane.getViewport().getWidth() / currentWidthCell;
             if (result == 0) result = 1;
             return result;
         }
@@ -108,21 +111,32 @@ public class TileExplorerPane extends JScrollPane {
     }
 
     public TileExplorerPane() {
+        fileSystemExplorer=MainClass.getFileSystemExplorer();
+
         contentPane = new JPanel();
         currentLayout = new AdaptiveGridLayout(AdaptiveGridLayout.BIG_CELLS);
         contentPane.setLayout(currentLayout);
-        add(contentPane);
-        addComponentListener(new ComponentAdapter() {
+        contentPane.setBackground(backColor);
+
+        scrollPane=new JScrollPane(contentPane);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        scrollPane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                revalidate();
+                contentPane.revalidate();
             }
         });
+
+        setContent(fileSystemExplorer.getCurrentElementsList());
+    }
+
+    public Component getVisualComponent() {
+        return scrollPane;
     }
 
     //Метод запоняет панель контента элементами
     public void setContent(FileSystemElement[] elements) {
-        //Предварительно очищаем панель контента от прежних элементов
+        //Сперва очищаем панель контента от прежних элементов
         clearContentPane();
 
         //Добавляем на панель контента новые элементы
@@ -137,7 +151,14 @@ public class TileExplorerPane extends JScrollPane {
             if (currentLayout.isSmallCells()){
                 content[i].setIcon(new ImageIcon("res\\tileView\\folder_small.png"));
             }
+            content[i].setHorizontalTextPosition(SwingConstants.CENTER);
+            content[i].setVerticalTextPosition(SwingConstants.BOTTOM);
+            content[i].setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            content[i].setBackground(backColor);
+            contentPane.add(content[i]);
+            i++;
         }
+        scrollPane.repaint();
     }
 
     private void clearContentPane() {

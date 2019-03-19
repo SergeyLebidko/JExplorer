@@ -4,6 +4,9 @@ import javax.swing.*;
 
 public class MainClass {
 
+    //Объект для перемещения по каталогам файловой системы. Он общий для всех классов проекта
+    private static final FileSystemExplorer fileSystemExplorer=new FileSystemExplorer();
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -11,6 +14,10 @@ public class MainClass {
                 new GUI();
             }
         });
+    }
+
+    public static FileSystemExplorer getFileSystemExplorer() {
+        return fileSystemExplorer;
     }
 
 }
