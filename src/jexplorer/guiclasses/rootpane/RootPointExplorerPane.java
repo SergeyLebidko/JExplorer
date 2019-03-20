@@ -1,4 +1,8 @@
-package jexplorer;
+package jexplorer.guiclasses.rootpane;
+
+import jexplorer.ExplorerPane;
+import jexplorer.FileSystemExplorer;
+import jexplorer.MainClass;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,7 +11,7 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.LinkedList;
 
-public class RootPointExplorerPane implements ExplorerPane{
+public class RootPointExplorerPane implements ExplorerPane {
 
     private JScrollPane scrollPane;
     private JPanel contentPane;
@@ -55,7 +59,7 @@ public class RootPointExplorerPane implements ExplorerPane{
     }
 
     public RootPointExplorerPane() {
-        fileSystemExplorer=MainClass.getFileSystemExplorer();
+        fileSystemExplorer= MainClass.getFileSystemExplorer();
 
         contentPane=new JPanel();
         currentLayout=new StackLayout();

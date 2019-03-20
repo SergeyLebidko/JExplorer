@@ -1,4 +1,8 @@
-package jexplorer;
+package jexplorer.guiclasses.tilepane;
+
+import jexplorer.ExplorerPane;
+import jexplorer.FileSystemExplorer;
+import jexplorer.MainClass;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,7 +10,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 
-public class TileExplorerPane implements ExplorerPane{
+public class TileExplorerPane implements ExplorerPane {
 
     private JScrollPane scrollPane;
     private JPanel contentPane;
@@ -112,7 +116,7 @@ public class TileExplorerPane implements ExplorerPane{
     }
 
     public TileExplorerPane() {
-        fileSystemExplorer=MainClass.getFileSystemExplorer();
+        fileSystemExplorer= MainClass.getFileSystemExplorer();
 
         contentPane = new JPanel();
         currentLayout = new AdaptiveGridLayout(AdaptiveGridLayout.BIG_CELLS);
