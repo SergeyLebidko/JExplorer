@@ -64,7 +64,7 @@ public class FileSystemExplorer {
 
         FileTypes[] fileTypes = FileTypes.values();
         int findPosition = -1;
-        for (int i=0;i<fileExtension.length();i++){
+        for (int i=0;i<fileExtensions.length;i++){
             for (String s: fileExtensions[i]){
                 if (fileExtension.equals(s)){
                     findPosition=i;

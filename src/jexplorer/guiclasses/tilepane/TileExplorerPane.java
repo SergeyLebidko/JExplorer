@@ -20,7 +20,7 @@ public class TileExplorerPane implements ExplorerPane {
 
     private final Color backColor = Color.WHITE;
     private final Color textColorForNoHidden = Color.BLACK;
-    private final Color textColorForHidden = new Color(130,130,130);
+    private final Color textColorForHidden = new Color(130, 130, 130);
 
 
     class AdaptiveGridLayout implements LayoutManager {
@@ -180,7 +180,7 @@ public class TileExplorerPane implements ExplorerPane {
         }
     }
 
-    private void setParameters(File element, JLabel lab){
+    private void setParameters(File element, JLabel lab) {
         setText(element, lab);
         setIcon(element, lab);
         setTextColors(element, lab);
@@ -188,33 +188,28 @@ public class TileExplorerPane implements ExplorerPane {
         setAligments(lab);
     }
 
-    private void setText(File element, JLabel lab){
+    private void setText(File element, JLabel lab) {
         lab.setText(element.getName());
         lab.setToolTipText(element.getName());
     }
 
     private void setIcon(File element, JLabel lab) {
-        if (element.isDirectory()) {
-            if (currentLayout.isBigCells()) {
-                if (element.isHidden()) lab.setIcon(new ImageIcon("res\\tileView\\folder_big_hidden.png"));
-                if (!element.isHidden()) lab.setIcon(new ImageIcon("res\\tileView\\folder_big.png"));
-            }
-            if (currentLayout.isSmallCells()) {
-                if (element.isHidden()) lab.setIcon(new ImageIcon("res\\tileView\\folder_small_hidden.png"));
-                if (!element.isHidden()) lab.setIcon(new ImageIcon("res\\tileView\\folder_small.png"));
-            }
-        }
-        if (element.isFile()){
-            if (currentLayout.isBigCells()) {
-                //Вставить код выбора подходящего значка
-            }
-            if (currentLayout.isSmallCells()) {
-                //вставить код выбора подходящего значка
-            }
-        }
+        String path="res\\tileView\\";
+
+        if (element.isDirectory())path+="folder";
+        if (element.isFile())path+=fileSystemExplorer.getFileType(element).getName();
+
+        if (currentLayout.isBigCells())path+="_big";
+        if (currentLayout.isSmallCells())path+="_small";
+
+        if (element.isHidden())path+="_hidden";
+
+        path+=".png";
+
+        lab.setIcon(new ImageIcon(path));
     }
 
-    private void setTextColors(File element, JLabel lab){
+    private void setTextColors(File element, JLabel lab) {
         if (element.isHidden()) {
             lab.setForeground(textColorForHidden);
         }
