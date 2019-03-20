@@ -6,7 +6,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 
-public class TileExplorerPane {
+public class TileExplorerPane implements ExplorerPane{
 
     private JScrollPane scrollPane;
     private JPanel contentPane;

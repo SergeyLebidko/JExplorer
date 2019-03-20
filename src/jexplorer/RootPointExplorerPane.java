@@ -7,7 +7,7 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.LinkedList;
 
-public class RootPointExplorerPane {
+public class RootPointExplorerPane implements ExplorerPane{
 
     private JScrollPane scrollPane;
     private JPanel contentPane;
@@ -71,14 +71,14 @@ public class RootPointExplorerPane {
             }
         });
 
-        setContent();
+        refreshContent();
     }
 
     public Component getVisualComponent(){
         return scrollPane;
     }
 
-    public void setContent(){
+    public void refreshContent(){
         //Сперва очищаем панель контента от прежних элементов
         clearContentPane();
 
