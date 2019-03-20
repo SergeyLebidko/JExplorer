@@ -151,12 +151,14 @@ public class TileExplorerPane implements ExplorerPane {
             content[i] = new JLabel();
             content[i].setText(element.getName());
             content[i].setToolTipText(element.getName());
+
             if (currentLayout.isBigCells()){
                 content[i].setIcon(new ImageIcon("res\\tileView\\folder_big.png"));
             }
             if (currentLayout.isSmallCells()){
                 content[i].setIcon(new ImageIcon("res\\tileView\\folder_small.png"));
             }
+
             content[i].setHorizontalTextPosition(SwingConstants.CENTER);
             content[i].setVerticalTextPosition(SwingConstants.BOTTOM);
             content[i].setHorizontalAlignment(SwingConstants.CENTER);

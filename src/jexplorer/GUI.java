@@ -12,10 +12,10 @@ public class GUI {
     private final int HEIGHT_FRM = 850;
 
     private final JFrame frm;
-    private JPanel content;
 
-    private TileExplorerPane tileExplorerPane;
-    private RootPointExplorerPane rootPointExplorerPane;
+    private ExplorerPane currentExplorerPane;
+
+    private ExplorerPane rootPointExplorerPane;
 
     public GUI() {
 
@@ -37,27 +37,30 @@ public class GUI {
         int yPos = Toolkit.getDefaultToolkit().getScreenSize().height / 2 - HEIGHT_FRM / 2;
         frm.setLocation(xPos, yPos);
 
-        content=new JPanel();
-        content.setLayout(new BorderLayout(5,5));
-        content.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        //Создаем панель контента для главного окна
+        JPanel contentPane=new JPanel();
+        contentPane.setLayout(new BorderLayout(5,5));
+        contentPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        frm.setContentPane(contentPane);
 
-        createTileExplorerPane();
-        createRootPointPane();
+        //Создаем вспомогательную панель для отображения содержимого текущей папки
+        JPanel fPane=new JPanel();
+        fPane.setLayout(new BorderLayout());
+        currentExplorerPane=new TileExplorerPane();
+        fPane.add(currentExplorerPane.getVisualComponent(),BorderLayout.CENTER);
 
-        frm.setContentPane(content);
-        frm.setVisible(true);
-    }
-
-    private void createTileExplorerPane(){
-        tileExplorerPane=new TileExplorerPane();
-        content.add(tileExplorerPane.getVisualComponent(),BorderLayout.CENTER);
-    }
-
-    private void createRootPointPane(){
+        //Создаем вспомогательную панель для отображения списка корневых точек
+        JPanel rPane=new JPanel();
+        rPane.setLayout(new BorderLayout());
+        rPane.setPreferredSize(new Dimension(WIDTH_FRM/6,(int) (HEIGHT_FRM*0.9)));
         rootPointExplorerPane=new RootPointExplorerPane();
-        Component component=rootPointExplorerPane.getVisualComponent();
-        component.setPreferredSize(new Dimension(WIDTH_FRM/8,(int) (HEIGHT_FRM*0.9)));
-        content.add(component,BorderLayout.WEST);
+        rPane.add(rootPointExplorerPane.getVisualComponent(),BorderLayout.CENTER);
+
+        //Добавляем вспомогательные панели в корневую панель
+        contentPane.add(rPane,BorderLayout.WEST);
+        contentPane.add(fPane,BorderLayout.CENTER);
+
+        frm.setVisible(true);
     }
 
 }
