@@ -1,7 +1,7 @@
 package jexplorer.guiclasses.rootpane;
 
-import jexplorer.ExplorerPane;
-import jexplorer.FileSystemExplorer;
+import jexplorer.guiclasses.ExplorerPane;
+import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.MainClass;
 
 import javax.swing.*;

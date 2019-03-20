@@ -1,5 +1,6 @@
 package jexplorer;
 
+import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
 import jexplorer.guiclasses.tilepane.TileExplorerPane;
 

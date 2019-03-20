@@ -1,5 +1,7 @@
 package jexplorer;
 
+import jexplorer.fileexplorerclasses.FileSystemExplorer;
+
 import javax.swing.*;
 
 public class MainClass {

@@ -1,4 +1,4 @@
-package jexplorer;
+package jexplorer.guiclasses;
 
 import java.awt.*;
 
