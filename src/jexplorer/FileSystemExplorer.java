@@ -1,6 +1,7 @@
 package jexplorer;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class FileSystemExplorer {
@@ -14,17 +15,9 @@ public class FileSystemExplorer {
     }
 
     //Метод возвращает список элементов (файлов и папок) текущего каталога
-    public FileSystemElement[] getCurrentElementsList() {
-        FileSystemElement[] result;
-
-        //Код-заглушка. Должен быть удален
-        result = new FileSystemElement[100];
-        for (int i = 0; i < 100; i++) {
-            result[i] = new FileSystemElement();
-            result[i].name = "Элемент №" + i;
-            result[i].toolTipText = "Элемент №" + i;
-        }
-
+    public File[] getCurrentElementsList() {
+        File[] result;
+        result=currentDirectory.listFiles();
         return result;
     }
 

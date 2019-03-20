@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class GUI {
 
-    private final int WIDTH_FRM = 1400;
+    private final int WIDTH_FRM = 1300;
     private final int HEIGHT_FRM = 850;
 
     private final JFrame frm;

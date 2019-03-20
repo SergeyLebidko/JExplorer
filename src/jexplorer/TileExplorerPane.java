@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.File;
 
 public class TileExplorerPane {
 
@@ -127,24 +128,25 @@ public class TileExplorerPane {
             }
         });
 
-        setContent(fileSystemExplorer.getCurrentElementsList());
+        refreshContent();
     }
 
     public Component getVisualComponent() {
         return scrollPane;
     }
 
-    public void setContent(FileSystemElement[] elements) {
+    public void refreshContent() {
         //Сперва очищаем панель контента от прежних элементов
         clearContentPane();
 
         //Добавляем на панель контента новые элементы
+        File[] elements=fileSystemExplorer.getCurrentElementsList();
         content = new JLabel[elements.length];
         int i = 0;
-        for (FileSystemElement element : elements) {
+        for (File element : elements) {
             content[i] = new JLabel();
-            content[i].setText(element.name);
-            content[i].setToolTipText(element.toolTipText);
+            content[i].setText(element.getName());
+            content[i].setToolTipText(element.getName());
             if (currentLayout.isBigCells()){
                 content[i].setIcon(new ImageIcon("res\\tileView\\folder_big.png"));
             }
