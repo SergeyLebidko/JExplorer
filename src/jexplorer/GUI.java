@@ -21,9 +21,9 @@ public class GUI {
     private JButton refreshRootPaneBtn;
     private JButton refreshExplorerPaneBtn;
 
-    private JButton bigTileView;
-    private JButton smallTileView;
-    private JButton tableView;
+    private JButton bigTileViewBtn;
+    private JButton smallTileViewBtn;
+    private JButton tableViewBtn;
 
     public GUI() {
 
@@ -56,6 +56,25 @@ public class GUI {
         fPane.setLayout(new BorderLayout());
         currentExplorerPane=new TileExplorerPane();
         fPane.add(currentExplorerPane.getVisualComponent(),BorderLayout.CENTER);
+
+        Box fUpPane=Box.createHorizontalBox();
+        fUpPane.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        refreshExplorerPaneBtn=new JButton(new ImageIcon("res\\refresh.png"));
+        refreshExplorerPaneBtn.setToolTipText("Обновить");
+        bigTileViewBtn =new JButton(new ImageIcon("res\\big_tiles.png"));
+        bigTileViewBtn.setToolTipText("Крупные значки");
+        smallTileViewBtn =new JButton(new ImageIcon("res\\small_tiles.png"));
+        smallTileViewBtn.setToolTipText("Мелкие значки");
+        tableViewBtn =new JButton(new ImageIcon("res\\table.png"));
+        tableViewBtn.setToolTipText("Таблица");
+        fUpPane.add(refreshExplorerPaneBtn);
+        fUpPane.add(Box.createHorizontalGlue());
+        fUpPane.add(tableViewBtn);
+        fUpPane.add(Box.createHorizontalStrut(5));
+        fUpPane.add(smallTileViewBtn);
+        fUpPane.add(Box.createHorizontalStrut(5));
+        fUpPane.add(bigTileViewBtn);
+        fPane.add(fUpPane, BorderLayout.NORTH);
 
         //Создаем вспомогательную панель для отображения списка корневых точек
         JPanel rPane=new JPanel();
