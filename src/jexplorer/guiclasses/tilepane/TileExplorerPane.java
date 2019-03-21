@@ -22,7 +22,6 @@ public class TileExplorerPane implements ExplorerPane {
     private final Color textColorForNoHidden = Color.BLACK;
     private final Color textColorForHidden = new Color(130, 130, 130);
 
-
     class AdaptiveGridLayout implements LayoutManager {
 
         static final int BIG_CELLS = 1;
@@ -174,6 +173,16 @@ public class TileExplorerPane implements ExplorerPane {
         contentPane.repaint();
     }
 
+    public void setBigCells(){
+        if (currentLayout.isSmallCells())currentLayout.setSizeCells(AdaptiveGridLayout.BIG_CELLS);
+        refreshContent();
+    }
+
+    public void setSmallCells(){
+        if (currentLayout.isBigCells())currentLayout.setSizeCells(AdaptiveGridLayout.SMALL_CELLS);
+        refreshContent();
+    }
+
     private void clearContentPane() {
         if (contentPane.getComponentCount() == 0) return;
         Component[] components = contentPane.getComponents();
@@ -200,12 +209,9 @@ public class TileExplorerPane implements ExplorerPane {
 
         if (element.isDirectory())path+="folder";
         if (element.isFile())path+=fileSystemExplorer.getFileType(element).getName();
-
         if (currentLayout.isBigCells())path+="_big";
         if (currentLayout.isSmallCells())path+="_small";
-
         if (element.isHidden())path+="_hidden";
-
         path+=".png";
 
         lab.setIcon(new ImageIcon(path));

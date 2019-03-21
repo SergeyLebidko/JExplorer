@@ -109,6 +109,8 @@ public class GUI {
         //Добавляем компонентам слушатели событий
         refreshRootPaneBtn.addActionListener(refreshRootPane);
         refreshExplorerPaneBtn.addActionListener(refreshCurrentExplorerPane);
+        bigTileViewBtn.addActionListener(setBigTiles);
+        smallTileViewBtn.addActionListener(setSmallTiles);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane,BorderLayout.WEST);
@@ -143,4 +145,25 @@ public class GUI {
             currentExplorerPane.refreshContent();
         }
     };
+
+    private ActionListener setBigTiles=new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (currentExplorerPane instanceof TileExplorerPane){
+                TileExplorerPane tileExplorerPane=(TileExplorerPane)currentExplorerPane;
+                tileExplorerPane.setBigCells();
+            }
+        }
+    };
+
+    private ActionListener setSmallTiles=new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (currentExplorerPane instanceof TileExplorerPane){
+                TileExplorerPane tileExplorerPane=(TileExplorerPane)currentExplorerPane;
+                tileExplorerPane.setSmallCells();
+            }
+        }
+    };
+
 }
