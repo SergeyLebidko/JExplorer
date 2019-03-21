@@ -7,6 +7,8 @@ import jexplorer.guiclasses.tilepane.TileExplorerPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GUI {
 
@@ -104,6 +106,10 @@ public class GUI {
         upPane.add(Box.createHorizontalStrut(5));
         upPane.add(adressPane.getVisualComponent());
 
+        //Добавляем компонентам слушатели событий
+        refreshRootPaneBtn.addActionListener(refreshRootPane);
+        refreshExplorerPaneBtn.addActionListener(refreshCurrentExplorerPane);
+
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane,BorderLayout.WEST);
         contentPane.add(fPane,BorderLayout.CENTER);
@@ -123,4 +129,18 @@ public class GUI {
     public AdressPane getAdressPane() {
         return adressPane;
     }
+
+    private ActionListener refreshRootPane=new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            rootPointExplorerPane.refreshContent();
+        }
+    };
+
+    private ActionListener refreshCurrentExplorerPane=new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            currentExplorerPane.refreshContent();
+        }
+    };
 }
