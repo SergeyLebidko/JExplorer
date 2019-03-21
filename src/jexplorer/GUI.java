@@ -6,8 +6,6 @@ import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
 import jexplorer.guiclasses.tilepane.TileExplorerPane;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,8 +22,7 @@ public class GUI {
     private ExplorerPane rootPointExplorerPane;
     private AdressPane adressPane;
 
-    private JButton refreshRootPaneBtn;
-    private JButton refreshExplorerPaneBtn;
+    private JButton refreshPanesBtn;
 
     private JButton bigTileViewBtn;
     private JButton smallTileViewBtn;
@@ -37,16 +34,16 @@ public class GUI {
     public GUI() {
 
         //Заменяем текущий LaF системным
-        String laf=UIManager.getSystemLookAndFeelClassName();
+        String laf = UIManager.getSystemLookAndFeelClassName();
         try {
             UIManager.setLookAndFeel(laf);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex){
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             JOptionPane.showMessageDialog(null, "Возникла ошибка при попытке переключить стиль интерфейса. Работа программы будет прекращена", "Ошибка", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
 
         //Создаем главное окно
-        frm=new JFrame("JExplorer");
+        frm = new JFrame("JExplorer");
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frm.setSize(WIDTH_FRM, HEIGHT_FRM);
         frm.setIconImage(new ImageIcon("res\\logo.png").getImage());
@@ -55,32 +52,28 @@ public class GUI {
         frm.setLocation(xPos, yPos);
 
         //Создаем панель контента для главного окна
-        JPanel contentPane=new JPanel();
-        contentPane.setLayout(new BorderLayout(5,5));
-        contentPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        JPanel contentPane = new JPanel();
+        contentPane.setLayout(new BorderLayout(5, 5));
+        contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         frm.setContentPane(contentPane);
 
         //Создаем вспомогательную панель для отображения содержимого текущей папки
-        JPanel fPane=new JPanel();
+        JPanel fPane = new JPanel();
         fPane.setLayout(new BorderLayout());
-        currentExplorerPane=new TileExplorerPane();
-        fPane.add(currentExplorerPane.getVisualComponent(),BorderLayout.CENTER);
+        currentExplorerPane = new TileExplorerPane();
+        fPane.add(currentExplorerPane.getVisualComponent(), BorderLayout.CENTER);
 
-        Box fUpPane=Box.createHorizontalBox();
-        fUpPane.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
-        refreshExplorerPaneBtn=new JButton(new ImageIcon("res\\refresh.png"));
-        refreshExplorerPaneBtn.setToolTipText("Обновить");
-        hiddenBtn=new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
+        Box fUpPane = Box.createHorizontalBox();
+        fUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        hiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
         hiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
         hiddenBtn.setToolTipText("Показать скрытые элементы");
-        bigTileViewBtn =new JButton(new ImageIcon("res\\big_tiles.png"));
+        bigTileViewBtn = new JButton(new ImageIcon("res\\big_tiles.png"));
         bigTileViewBtn.setToolTipText("Крупные значки");
-        smallTileViewBtn =new JButton(new ImageIcon("res\\small_tiles.png"));
+        smallTileViewBtn = new JButton(new ImageIcon("res\\small_tiles.png"));
         smallTileViewBtn.setToolTipText("Мелкие значки");
-        tableViewBtn =new JButton(new ImageIcon("res\\table.png"));
+        tableViewBtn = new JButton(new ImageIcon("res\\table.png"));
         tableViewBtn.setToolTipText("Таблица");
-        fUpPane.add(refreshExplorerPaneBtn);
-        fUpPane.add(Box.createHorizontalStrut(5));
         fUpPane.add(hiddenBtn);
         fUpPane.add(Box.createHorizontalGlue());
         fUpPane.add(tableViewBtn);
@@ -91,39 +84,38 @@ public class GUI {
         fPane.add(fUpPane, BorderLayout.NORTH);
 
         //Создаем вспомогательную панель для отображения списка корневых точек
-        JPanel rPane=new JPanel();
+        JPanel rPane = new JPanel();
         rPane.setLayout(new BorderLayout());
-        rPane.setPreferredSize(new Dimension(WIDTH_FRM/6,(int) (HEIGHT_FRM*0.9)));
-        rootPointExplorerPane=new RootPointExplorerPane();
-        rPane.add(rootPointExplorerPane.getVisualComponent(),BorderLayout.CENTER);
+        rPane.setPreferredSize(new Dimension(WIDTH_FRM / 6, (int) (HEIGHT_FRM * 0.9)));
+        rootPointExplorerPane = new RootPointExplorerPane();
+        rPane.add(rootPointExplorerPane.getVisualComponent(), BorderLayout.CENTER);
 
-        Box rUpPane=Box.createHorizontalBox();
-        rUpPane.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
-        refreshRootPaneBtn=new JButton(new ImageIcon("res\\refresh.png"));
-        refreshRootPaneBtn.setToolTipText("обновить");
-        rUpPane.add(refreshRootPaneBtn);
+        Box rUpPane = Box.createHorizontalBox();
+        rUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        refreshPanesBtn = new JButton(new ImageIcon("res\\refresh.png"));
+        refreshPanesBtn.setToolTipText("обновить");
+        rUpPane.add(refreshPanesBtn);
         rUpPane.add(Box.createHorizontalGlue());
         rPane.add(rUpPane, BorderLayout.NORTH);
 
         //Создаем панель, которая будет содаржать адресную строку и кнопку "вверх"
-        Box upPane=Box.createHorizontalBox();
-        upBtn=new JButton(new ImageIcon("res\\up.png"));
+        Box upPane = Box.createHorizontalBox();
+        upBtn = new JButton(new ImageIcon("res\\up.png"));
         upBtn.setToolTipText("Вверх");
-        adressPane=new AdressPane();
+        adressPane = new AdressPane();
         upPane.add(upBtn);
         upPane.add(Box.createHorizontalStrut(5));
         upPane.add(adressPane.getVisualComponent());
 
         //Добавляем компонентам слушатели событий
-        refreshRootPaneBtn.addActionListener(refreshRootPane);
-        refreshExplorerPaneBtn.addActionListener(refreshCurrentExplorerPane);
+        refreshPanesBtn.addActionListener(refreshPanes);
         bigTileViewBtn.addActionListener(setBigTiles);
         smallTileViewBtn.addActionListener(setSmallTiles);
         hiddenBtn.addActionListener(hiddenRevert);
 
         //Добавляем вспомогательные панели в корневую панель
-        contentPane.add(rPane,BorderLayout.WEST);
-        contentPane.add(fPane,BorderLayout.CENTER);
+        contentPane.add(rPane, BorderLayout.WEST);
+        contentPane.add(fPane, BorderLayout.CENTER);
         contentPane.add(upPane, BorderLayout.NORTH);
 
         frm.setVisible(true);
@@ -137,47 +129,42 @@ public class GUI {
         return adressPane;
     }
 
-    private ActionListener refreshRootPane=new ActionListener() {
+    private ActionListener refreshPanes = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             rootPointExplorerPane.refreshContent();
-        }
-    };
-
-    private ActionListener refreshCurrentExplorerPane=new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
             currentExplorerPane.refreshContent();
+            adressPane.refreshContent();
         }
     };
 
-    private ActionListener setBigTiles=new ActionListener() {
+    private ActionListener setBigTiles = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentExplorerPane instanceof TileExplorerPane){
-                TileExplorerPane tileExplorerPane=(TileExplorerPane)currentExplorerPane;
+            if (currentExplorerPane instanceof TileExplorerPane) {
+                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
                 tileExplorerPane.setBigCells();
             }
         }
     };
 
-    private ActionListener setSmallTiles=new ActionListener() {
+    private ActionListener setSmallTiles = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentExplorerPane instanceof TileExplorerPane){
-                TileExplorerPane tileExplorerPane=(TileExplorerPane)currentExplorerPane;
+            if (currentExplorerPane instanceof TileExplorerPane) {
+                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
                 tileExplorerPane.setSmallCells();
             }
         }
     };
 
-    private ActionListener hiddenRevert=new ActionListener() {
+    private ActionListener hiddenRevert = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentExplorerPane instanceof TileExplorerPane){
-                if (hiddenBtn.isSelected())hiddenBtn.setToolTipText("Не показывать скрытые элементы");
-                if (!hiddenBtn.isSelected())hiddenBtn.setToolTipText("Показать скрытые элементы");
-                TileExplorerPane tileExplorerPane=(TileExplorerPane)currentExplorerPane;
+            if (currentExplorerPane instanceof TileExplorerPane) {
+                if (hiddenBtn.isSelected()) hiddenBtn.setToolTipText("Не показывать скрытые элементы");
+                if (!hiddenBtn.isSelected()) hiddenBtn.setToolTipText("Показать скрытые элементы");
+                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
                 tileExplorerPane.revertShowHiddenElements();
             }
         }
