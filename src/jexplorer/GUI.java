@@ -18,6 +18,13 @@ public class GUI {
 
     private ExplorerPane rootPointExplorerPane;
 
+    private JButton refreshRootPaneBtn;
+    private JButton refreshExplorerPaneBtn;
+
+    private JButton bigTileView;
+    private JButton smallTileView;
+    private JButton tableView;
+
     public GUI() {
 
         //Заменяем текущий LaF системным
@@ -56,6 +63,14 @@ public class GUI {
         rPane.setPreferredSize(new Dimension(WIDTH_FRM/6,(int) (HEIGHT_FRM*0.9)));
         rootPointExplorerPane=new RootPointExplorerPane();
         rPane.add(rootPointExplorerPane.getVisualComponent(),BorderLayout.CENTER);
+
+        Box rUpPane=Box.createHorizontalBox();
+        rUpPane.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        refreshRootPaneBtn=new JButton(new ImageIcon("res\\refresh.png"));
+        refreshRootPaneBtn.setToolTipText("обновить");
+        rUpPane.add(refreshRootPaneBtn);
+        rUpPane.add(Box.createHorizontalGlue());
+        rPane.add(rUpPane, BorderLayout.NORTH);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane,BorderLayout.WEST);
