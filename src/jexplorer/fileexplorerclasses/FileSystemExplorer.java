@@ -21,6 +21,10 @@ public class FileSystemExplorer {
         return result;
     }
 
+    public File getCurrentDirectory(){
+        return currentDirectory;
+    }
+
     public LinkedList<File> getDisks() {
         File[] roots = File.listRoots();
         LinkedList<File> result = new LinkedList<>();
