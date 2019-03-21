@@ -1,11 +1,14 @@
 package jexplorer.guiclasses.rootpane;
 
+import jexplorer.GUI;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.MainClass;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
@@ -93,6 +96,8 @@ public class RootPointExplorerPane implements ExplorerPane {
         content[0]=new JButton();
         content[0].setText("Домашняя папка");
         content[0].setToolTipText("Домашний каталог пользователя");
+        content[0].setActionCommand(fileSystemExplorer.getUserHomeDir().toString());
+        content[0].addActionListener(al);
         content[0].setIcon(new ImageIcon("res\\rootPointView\\home_folder.png"));
         content[0].setBorder(BorderFactory.createEmptyBorder(8, 1, 8, 1));
         contentPane.add(content[0]);
@@ -106,13 +111,17 @@ public class RootPointExplorerPane implements ExplorerPane {
             txt=element.getAbsolutePath();
             txt="Диск "+txt.substring(0,txt.indexOf(':'));
             content[i].setToolTipText(txt);
+            content[i].setActionCommand(element.toString());
+            content[i].addActionListener(al);
             content[i].setIcon(new ImageIcon("res\\rootPointView\\disk.png"));
             content[i].setBorder(BorderFactory.createEmptyBorder(8, 1, 8, 1));
             content[i].setBackground(backColor);
             contentPane.add(content[i]);
             i++;
         }
-        scrollPane.repaint();
+
+        contentPane.revalidate();
+        contentPane.repaint();
     }
 
     private void clearContentPane(){
@@ -122,5 +131,17 @@ public class RootPointExplorerPane implements ExplorerPane {
             contentPane.remove(component);
         }
     }
+
+    private ActionListener al=new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            File directory=new File(e.getActionCommand());
+            fileSystemExplorer.setCurrentDirectory(directory);
+
+            GUI gui=MainClass.getGui();
+            gui.getCurrentExplorerPane().refreshContent();
+            gui.getAdressPane().refreshContent();
+        }
+    };
 
 }

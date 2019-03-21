@@ -55,6 +55,9 @@ public class AdressPane implements ExplorerPane {
         while ((btn=btnList.pollLast())!=null){
             contentPane.add(btn);
         }
+
+        contentPane.revalidate();
+        contentPane.repaint();
     }
 
     private void clearContentPane() {

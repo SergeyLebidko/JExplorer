@@ -147,7 +147,7 @@ public class TileExplorerPane implements ExplorerPane {
         clearContentPane();
 
         //Добавляем на панель контента новые элементы
-        File[] elements = fileSystemExplorer.getCurrentElementsList();
+        File[] elements = fileSystemExplorer.getCurrentDirectoryElementsList();
         content = new JLabel[elements.length];
         int i = 0;
 
@@ -169,7 +169,9 @@ public class TileExplorerPane implements ExplorerPane {
             i++;
         }
 
-        scrollPane.repaint();
+
+        contentPane.revalidate();
+        contentPane.repaint();
     }
 
     private void clearContentPane() {

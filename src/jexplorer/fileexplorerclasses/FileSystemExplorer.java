@@ -14,8 +14,13 @@ public class FileSystemExplorer {
         currentDirectory = getUserHomeDir();
     }
 
+    public void setCurrentDirectory(File directory){
+        if (directory.isFile())return;
+        currentDirectory=directory;
+    }
+
     //Метод возвращает список элементов (файлов и папок) текущего каталога
-    public File[] getCurrentElementsList() {
+    public File[] getCurrentDirectoryElementsList() {
         File[] result;
         result = currentDirectory.listFiles();
         return result;
