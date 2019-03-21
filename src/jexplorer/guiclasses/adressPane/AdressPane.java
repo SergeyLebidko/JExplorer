@@ -1,11 +1,14 @@
 package jexplorer.guiclasses.adressPane;
 
+import jexplorer.GUI;
 import jexplorer.MainClass;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.guiclasses.ExplorerPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.LinkedList;
 
@@ -46,6 +49,8 @@ public class AdressPane implements ExplorerPane {
                 btnName=currentPath.toString();
             }
             btn=new JButton(btnName);
+            btn.setActionCommand(currentPath.toString());
+            btn.addActionListener(al);
             btn.setBackground(backColor);
             btn.setBorder(BorderFactory.createEmptyBorder(8,10,8,10));
             btnList.add(btn);
@@ -67,5 +72,17 @@ public class AdressPane implements ExplorerPane {
             contentPane.remove(component);
         }
     }
+
+    private ActionListener al=new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            File directory=new File(e.getActionCommand());
+            fileSystemExplorer.setCurrentDirectory(directory);
+
+            GUI gui=MainClass.getGui();
+            gui.getCurrentExplorerPane().refreshContent();
+            refreshContent();
+        }
+    };
 
 }
