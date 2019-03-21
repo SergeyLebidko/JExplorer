@@ -12,13 +12,17 @@ import java.util.LinkedList;
 public class AdressPane implements ExplorerPane {
 
     private JScrollPane scrollPane;
-    private Box contentPane;
+    private JPanel contentPane;
     private FileSystemExplorer fileSystemExplorer;
+
+    private final Color backColor = Color.WHITE;
 
     public AdressPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
 
-        contentPane = Box.createHorizontalBox();
+        contentPane = new JPanel();
+        contentPane.setLayout(new FlowLayout(FlowLayout.LEFT));
+        contentPane.setBackground(backColor);
         scrollPane = new JScrollPane(contentPane);
 
         refreshContent();
@@ -42,16 +46,15 @@ public class AdressPane implements ExplorerPane {
                 btnName=currentPath.toString();
             }
             btn=new JButton(btnName);
+            btn.setBackground(backColor);
+            btn.setBorder(BorderFactory.createEmptyBorder(8,10,8,10));
             btnList.add(btn);
             currentPath = currentPath.getParentFile();
         } while (currentPath != null);
 
-        while ((btn=btnList.poll())!=null){
+        while ((btn=btnList.pollLast())!=null){
             contentPane.add(btn);
-            contentPane.add(Box.createHorizontalStrut(5));
         }
-
-        contentPane.add(Box.createHorizontalGlue());
     }
 
     private void clearContentPane() {

@@ -1,6 +1,7 @@
 package jexplorer;
 
 import jexplorer.guiclasses.ExplorerPane;
+import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
 import jexplorer.guiclasses.tilepane.TileExplorerPane;
 
@@ -17,6 +18,7 @@ public class GUI {
     private ExplorerPane currentExplorerPane;
 
     private ExplorerPane rootPointExplorerPane;
+    private AdressPane adressPane;
 
     private JButton refreshRootPaneBtn;
     private JButton refreshExplorerPaneBtn;
@@ -24,6 +26,8 @@ public class GUI {
     private JButton bigTileViewBtn;
     private JButton smallTileViewBtn;
     private JButton tableViewBtn;
+
+    private JButton upBtn;
 
     public GUI() {
 
@@ -91,11 +95,32 @@ public class GUI {
         rUpPane.add(Box.createHorizontalGlue());
         rPane.add(rUpPane, BorderLayout.NORTH);
 
+        //Создаем панель, которая будет содаржать адресную строку и кнопку "вверх"
+        Box upPane=Box.createHorizontalBox();
+        upBtn=new JButton(new ImageIcon("res\\up.png"));
+        upBtn.setToolTipText("Вверх");
+        adressPane=new AdressPane();
+        upPane.add(upBtn);
+        upPane.add(Box.createHorizontalStrut(5));
+        upPane.add(adressPane.getVisualComponent());
+
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane,BorderLayout.WEST);
         contentPane.add(fPane,BorderLayout.CENTER);
+        contentPane.add(upPane, BorderLayout.NORTH);
 
         frm.setVisible(true);
     }
 
+    public ExplorerPane getCurrentExplorerPane() {
+        return currentExplorerPane;
+    }
+
+    public ExplorerPane getRootPointExplorerPane() {
+        return rootPointExplorerPane;
+    }
+
+    public AdressPane getAdressPane() {
+        return adressPane;
+    }
 }
