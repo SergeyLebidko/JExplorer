@@ -49,33 +49,13 @@ public class FileSystemExplorer {
         if (file.isDirectory()) return null;
         String fileExtension = getFileExtension(file);
 
-        String[][] fileExtensions = {
-                {"exe"},
-                {"txt", "doc", "docx", "rtf", "odt"},
-                {"xls", "xlsx", "ods"},
-                {"ppt", "pptx", "odp"},
-                {"rar", "zip", "7z"},
-                {"pdf"},
-                {"htm", "html"},
-                {"jpg", "jpeg", "bmp", "png", "gif", "ico"},
-                {"avi", "mkv", "mp4", "wmv", "mpeg", "mpg", "h264", "3gp"},
-                {"mp3", "aac", "aac", "flac", "wav", "wave", "wma"}
-        };
-
-        FileTypes[] fileTypes = FileTypes.values();
-        int findPosition = -1;
-        for (int i=0;i<fileExtensions.length;i++){
-            for (String s: fileExtensions[i]){
-                if (fileExtension.equals(s)){
-                    findPosition=i;
-                    break;
-                }
+        for (FileTypes type: FileTypes.values()){             //Во внешнем цикле перебираем типы
+            for (String ext: type.getExtensionsSet()){        //Во внутреннем - связанные с этими типа расширения
+                if (fileExtension.equals(ext))return type;
             }
-            if (findPosition!=(-1))break;
         }
 
-        if (findPosition==(-1))return FileTypes.OTHER;
-        return fileTypes[findPosition];
+        return FileTypes.OTHER;
     }
 
 }
