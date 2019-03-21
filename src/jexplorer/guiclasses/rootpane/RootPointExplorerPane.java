@@ -100,6 +100,7 @@ public class RootPointExplorerPane implements ExplorerPane {
         content[0].addActionListener(al);
         content[0].setIcon(new ImageIcon("res\\rootPointView\\home_folder.png"));
         content[0].setBorder(BorderFactory.createEmptyBorder(8, 1, 8, 1));
+        content[0].setBackground(backColor);
         contentPane.add(content[0]);
 
         String txt;

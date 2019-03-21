@@ -18,6 +18,8 @@ public class TileExplorerPane implements ExplorerPane {
     private AdaptiveGridLayout currentLayout;
     private FileSystemExplorer fileSystemExplorer;
 
+    private boolean showHiddenElements;
+
     private final Color backColor = Color.WHITE;
     private final Color textColorForNoHidden = Color.BLACK;
     private final Color textColorForHidden = new Color(130, 130, 130);
@@ -134,6 +136,7 @@ public class TileExplorerPane implements ExplorerPane {
             }
         });
 
+        showHiddenElements = false;
         refreshContent();
     }
 
@@ -153,6 +156,7 @@ public class TileExplorerPane implements ExplorerPane {
         //Вначале добавляем каталоги
         for (File element : elements) {
             if (!element.isDirectory()) continue;
+            if (element.isHidden() & !showHiddenElements) continue;
             content[i] = new JLabel();
             setParameters(element, content[i]);
             contentPane.add(content[i]);
@@ -162,6 +166,7 @@ public class TileExplorerPane implements ExplorerPane {
         //Затем добавляем файлы
         for (File element : elements) {
             if (!element.isFile()) continue;
+            if (element.isHidden() & !showHiddenElements) continue;
             content[i] = new JLabel();
             setParameters(element, content[i]);
             contentPane.add(content[i]);
@@ -173,13 +178,18 @@ public class TileExplorerPane implements ExplorerPane {
         contentPane.repaint();
     }
 
-    public void setBigCells(){
-        if (currentLayout.isSmallCells())currentLayout.setSizeCells(AdaptiveGridLayout.BIG_CELLS);
+    public void setBigCells() {
+        if (currentLayout.isSmallCells()) currentLayout.setSizeCells(AdaptiveGridLayout.BIG_CELLS);
         refreshContent();
     }
 
-    public void setSmallCells(){
-        if (currentLayout.isBigCells())currentLayout.setSizeCells(AdaptiveGridLayout.SMALL_CELLS);
+    public void setSmallCells() {
+        if (currentLayout.isBigCells()) currentLayout.setSizeCells(AdaptiveGridLayout.SMALL_CELLS);
+        refreshContent();
+    }
+
+    public void revertShowHiddenElements() {
+        showHiddenElements=!showHiddenElements;
         refreshContent();
     }
 
@@ -205,14 +215,14 @@ public class TileExplorerPane implements ExplorerPane {
     }
 
     private void setIcon(File element, JLabel lab) {
-        String path="res\\tileView\\";
+        String path = "res\\tileView\\";
 
-        if (element.isDirectory())path+="folder";
-        if (element.isFile())path+=fileSystemExplorer.getFileType(element).getName();
-        if (currentLayout.isBigCells())path+="_big";
-        if (currentLayout.isSmallCells())path+="_small";
-        if (element.isHidden())path+="_hidden";
-        path+=".png";
+        if (element.isDirectory()) path += "folder";
+        if (element.isFile()) path += fileSystemExplorer.getFileType(element).getName();
+        if (currentLayout.isBigCells()) path += "_big";
+        if (currentLayout.isSmallCells()) path += "_small";
+        if (element.isHidden()) path += "_hidden";
+        path += ".png";
 
         lab.setIcon(new ImageIcon(path));
     }

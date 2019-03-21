@@ -6,6 +6,8 @@ import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
 import jexplorer.guiclasses.tilepane.TileExplorerPane;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +30,7 @@ public class GUI {
     private JButton bigTileViewBtn;
     private JButton smallTileViewBtn;
     private JButton tableViewBtn;
+    private JToggleButton hiddenBtn;
 
     private JButton upBtn;
 
@@ -67,6 +70,9 @@ public class GUI {
         fUpPane.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
         refreshExplorerPaneBtn=new JButton(new ImageIcon("res\\refresh.png"));
         refreshExplorerPaneBtn.setToolTipText("Обновить");
+        hiddenBtn=new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
+        hiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
+        hiddenBtn.setToolTipText("Показать скрытые элементы");
         bigTileViewBtn =new JButton(new ImageIcon("res\\big_tiles.png"));
         bigTileViewBtn.setToolTipText("Крупные значки");
         smallTileViewBtn =new JButton(new ImageIcon("res\\small_tiles.png"));
@@ -74,6 +80,8 @@ public class GUI {
         tableViewBtn =new JButton(new ImageIcon("res\\table.png"));
         tableViewBtn.setToolTipText("Таблица");
         fUpPane.add(refreshExplorerPaneBtn);
+        fUpPane.add(Box.createHorizontalStrut(5));
+        fUpPane.add(hiddenBtn);
         fUpPane.add(Box.createHorizontalGlue());
         fUpPane.add(tableViewBtn);
         fUpPane.add(Box.createHorizontalStrut(5));
@@ -111,6 +119,7 @@ public class GUI {
         refreshExplorerPaneBtn.addActionListener(refreshCurrentExplorerPane);
         bigTileViewBtn.addActionListener(setBigTiles);
         smallTileViewBtn.addActionListener(setSmallTiles);
+        hiddenBtn.addActionListener(hiddenRevert);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane,BorderLayout.WEST);
@@ -122,10 +131,6 @@ public class GUI {
 
     public ExplorerPane getCurrentExplorerPane() {
         return currentExplorerPane;
-    }
-
-    public ExplorerPane getRootPointExplorerPane() {
-        return rootPointExplorerPane;
     }
 
     public AdressPane getAdressPane() {
@@ -162,6 +167,18 @@ public class GUI {
             if (currentExplorerPane instanceof TileExplorerPane){
                 TileExplorerPane tileExplorerPane=(TileExplorerPane)currentExplorerPane;
                 tileExplorerPane.setSmallCells();
+            }
+        }
+    };
+
+    private ActionListener hiddenRevert=new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (currentExplorerPane instanceof TileExplorerPane){
+                if (hiddenBtn.isSelected())hiddenBtn.setToolTipText("Не показывать скрытые элементы");
+                if (!hiddenBtn.isSelected())hiddenBtn.setToolTipText("Показать скрытые элементы");
+                TileExplorerPane tileExplorerPane=(TileExplorerPane)currentExplorerPane;
+                tileExplorerPane.revertShowHiddenElements();
             }
         }
     };
