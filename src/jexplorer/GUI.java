@@ -69,7 +69,7 @@ public class GUI {
         fUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         showHiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
         showHiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
-        showHiddenBtn.setToolTipText("Показать скрытые элементы");
+        showHiddenBtn.setToolTipText("Сейчас скрытые элементы не отображаются");
         bigTileViewBtn = new JButton(new ImageIcon("res\\big_tiles.png"));
         bigTileViewBtn.setToolTipText("Крупные значки");
         smallTileViewBtn = new JButton(new ImageIcon("res\\small_tiles.png"));
@@ -173,11 +173,11 @@ public class GUI {
             boolean show = false;
             if (showHiddenBtn.isSelected()) {
                 show = true;
-                showHiddenBtn.setToolTipText("Не показывать скрытые элементы");
+                showHiddenBtn.setToolTipText("Сейчас срытые элементы отображаются");
             }
             if (!showHiddenBtn.isSelected()) {
                 show = false;
-                showHiddenBtn.setToolTipText("Показать скрытые элементы");
+                showHiddenBtn.setToolTipText("Сейчас скрытые элементы не отображаются");
             }
             currentExplorerPane.setShowHiddenElements(show);
         }
