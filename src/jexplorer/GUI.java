@@ -27,7 +27,7 @@ public class GUI {
     private JButton bigTileViewBtn;
     private JButton smallTileViewBtn;
     private JButton tableViewBtn;
-    private JToggleButton hiddenBtn;
+    private JToggleButton showHiddenBtn;
 
     private JButton upBtn;
 
@@ -65,16 +65,16 @@ public class GUI {
 
         Box fUpPane = Box.createHorizontalBox();
         fUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-        hiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
-        hiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
-        hiddenBtn.setToolTipText("Показать скрытые элементы");
+        showHiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
+        showHiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
+        showHiddenBtn.setToolTipText("Показать скрытые элементы");
         bigTileViewBtn = new JButton(new ImageIcon("res\\big_tiles.png"));
         bigTileViewBtn.setToolTipText("Крупные значки");
         smallTileViewBtn = new JButton(new ImageIcon("res\\small_tiles.png"));
         smallTileViewBtn.setToolTipText("Мелкие значки");
         tableViewBtn = new JButton(new ImageIcon("res\\table.png"));
         tableViewBtn.setToolTipText("Таблица");
-        fUpPane.add(hiddenBtn);
+        fUpPane.add(showHiddenBtn);
         fUpPane.add(Box.createHorizontalGlue());
         fUpPane.add(tableViewBtn);
         fUpPane.add(Box.createHorizontalStrut(5));
@@ -93,7 +93,7 @@ public class GUI {
         Box rUpPane = Box.createHorizontalBox();
         rUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         refreshPanesBtn = new JButton(new ImageIcon("res\\refresh.png"));
-        refreshPanesBtn.setToolTipText("обновить");
+        refreshPanesBtn.setToolTipText("Обновить");
         rUpPane.add(refreshPanesBtn);
         rUpPane.add(Box.createHorizontalGlue());
         rPane.add(rUpPane, BorderLayout.NORTH);
@@ -111,7 +111,7 @@ public class GUI {
         refreshPanesBtn.addActionListener(refreshPanes);
         bigTileViewBtn.addActionListener(setBigTiles);
         smallTileViewBtn.addActionListener(setSmallTiles);
-        hiddenBtn.addActionListener(hiddenRevert);
+        showHiddenBtn.addActionListener(hiddenRevert);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
@@ -162,10 +162,18 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentExplorerPane instanceof TileExplorerPane) {
-                if (hiddenBtn.isSelected()) hiddenBtn.setToolTipText("Не показывать скрытые элементы");
-                if (!hiddenBtn.isSelected()) hiddenBtn.setToolTipText("Показать скрытые элементы");
+                boolean show = false;
+                if (showHiddenBtn.isSelected()) {
+                    show = true;
+                    showHiddenBtn.setToolTipText("Не показывать скрытые элементы");
+                }
+                if (!showHiddenBtn.isSelected()) {
+                    show = false;
+                    showHiddenBtn.setToolTipText("Показать скрытые элементы");
+                }
+
                 TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
-                tileExplorerPane.revertShowHiddenElements();
+                tileExplorerPane.setShowHiddenElements(show);
             }
         }
     };

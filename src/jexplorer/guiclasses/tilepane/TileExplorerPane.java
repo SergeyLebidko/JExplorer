@@ -121,6 +121,7 @@ public class TileExplorerPane implements ExplorerPane {
 
     public TileExplorerPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
+        UIManager.put("ScrollBar.width", 20);
 
         contentPane = new JPanel();
         currentLayout = new AdaptiveGridLayout(AdaptiveGridLayout.BIG_CELLS);
@@ -188,8 +189,9 @@ public class TileExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
-    public void revertShowHiddenElements() {
-        showHiddenElements=!showHiddenElements;
+    public void setShowHiddenElements(boolean show) {
+        if (show==showHiddenElements)return;
+        showHiddenElements=show;
         refreshContent();
     }
 

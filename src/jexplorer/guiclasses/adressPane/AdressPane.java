@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.LinkedList;
 
@@ -22,6 +24,7 @@ public class AdressPane implements ExplorerPane {
 
     public AdressPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
+        UIManager.put("ScrollBar.width", 5);
 
         contentPane = new JPanel();
         contentPane.setLayout(new FlowLayout(FlowLayout.LEFT));

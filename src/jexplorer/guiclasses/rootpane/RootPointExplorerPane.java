@@ -63,6 +63,7 @@ public class RootPointExplorerPane implements ExplorerPane {
 
     public RootPointExplorerPane() {
         fileSystemExplorer= MainClass.getFileSystemExplorer();
+        UIManager.put("ScrollBar.width", 20);
 
         contentPane=new JPanel();
         currentLayout=new StackLayout();
