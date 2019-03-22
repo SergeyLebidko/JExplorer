@@ -14,63 +14,67 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.LinkedList;
 
-public class RootPointExplorerPane implements ExplorerPane {
+public class RootPointExplorerPane {
 
     private JScrollPane scrollPane;
     private JPanel contentPane;
     private JButton[] content;
     private StackLayout currentLayout;
     private FileSystemExplorer fileSystemExplorer;
+    private GUI gui;
 
-    private final Color backColor=Color.WHITE;
+    private final Color backColor = Color.WHITE;
 
     class StackLayout implements LayoutManager {
 
         @Override
-        public void addLayoutComponent(String name, Component comp) {}
+        public void addLayoutComponent(String name, Component comp) {
+        }
 
         @Override
-        public void removeLayoutComponent(Component comp) {}
+        public void removeLayoutComponent(Component comp) {
+        }
 
         @Override
         public Dimension preferredLayoutSize(Container parent) {
             Dimension dim;
             int preferredWidth, preferredHeight;
-            preferredWidth=scrollPane.getViewport().getWidth();
-            preferredHeight=0;
-            for (Component c: parent.getComponents()){
-                preferredHeight+=c.getPreferredSize().getHeight();
+            preferredWidth = scrollPane.getViewport().getWidth();
+            preferredHeight = 0;
+            for (Component c : parent.getComponents()) {
+                preferredHeight += c.getPreferredSize().getHeight();
             }
-            dim=new Dimension(preferredWidth,preferredHeight);
+            dim = new Dimension(preferredWidth, preferredHeight);
             return dim;
         }
 
         @Override
         public Dimension minimumLayoutSize(Container parent) {
-            return new Dimension(0,0);
+            return new Dimension(0, 0);
         }
 
         @Override
         public void layoutContainer(Container parent) {
             int y;
-            y=0;
-            for (Component c: parent.getComponents()){
-                c.setBounds(0,y,scrollPane.getViewport().getWidth(), (int) c.getPreferredSize().getHeight());
-                y+=c.getPreferredSize().getHeight();
+            y = 0;
+            for (Component c : parent.getComponents()) {
+                c.setBounds(0, y, scrollPane.getViewport().getWidth(), (int) c.getPreferredSize().getHeight());
+                y += c.getPreferredSize().getHeight();
             }
         }
     }
 
     public RootPointExplorerPane() {
-        fileSystemExplorer= MainClass.getFileSystemExplorer();
+        fileSystemExplorer = MainClass.getFileSystemExplorer();
+        gui = MainClass.getGui();
         UIManager.put("ScrollBar.width", 20);
 
-        contentPane=new JPanel();
-        currentLayout=new StackLayout();
+        contentPane = new JPanel();
+        currentLayout = new StackLayout();
         contentPane.setLayout(currentLayout);
         contentPane.setBackground(backColor);
 
-        scrollPane=new JScrollPane(contentPane);
+        scrollPane = new JScrollPane(contentPane);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.addComponentListener(new ComponentAdapter() {
             @Override
@@ -82,19 +86,19 @@ public class RootPointExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
-    public Component getVisualComponent(){
+    public Component getVisualComponent() {
         return scrollPane;
     }
 
-    public void refreshContent(){
+    public void refreshContent() {
         //Сперва очищаем панель контента от прежних элементов
         clearContentPane();
 
         //Добавляем на панель контента новые элементы
-        LinkedList<File> disks=fileSystemExplorer.getDisks();
-        content = new JButton[disks.size()+1];
+        LinkedList<File> disks = fileSystemExplorer.getDisks();
+        content = new JButton[disks.size() + 1];
 
-        content[0]=new JButton();
+        content[0] = new JButton();
         content[0].setText("Домашняя папка");
         content[0].setToolTipText("Домашний каталог пользователя");
         content[0].setActionCommand(fileSystemExplorer.getUserHomeDir().toString());
@@ -107,11 +111,11 @@ public class RootPointExplorerPane implements ExplorerPane {
         String txt;
         int i = 1;
         for (File element : fileSystemExplorer.getDisks()) {
-            txt="  "+element.getAbsolutePath();
+            txt = "  " + element.getAbsolutePath();
             content[i] = new JButton();
             content[i].setText(txt);
-            txt=element.getAbsolutePath();
-            txt="Диск "+txt.substring(0,txt.indexOf(':'));
+            txt = element.getAbsolutePath();
+            txt = "Диск " + txt.substring(0, txt.indexOf(':'));
             content[i].setToolTipText(txt);
             content[i].setActionCommand(element.toString());
             content[i].addActionListener(al);
@@ -126,7 +130,7 @@ public class RootPointExplorerPane implements ExplorerPane {
         contentPane.repaint();
     }
 
-    private void clearContentPane(){
+    private void clearContentPane() {
         if (contentPane.getComponentCount() == 0) return;
         Component[] components = contentPane.getComponents();
         for (Component component : components) {
@@ -134,13 +138,12 @@ public class RootPointExplorerPane implements ExplorerPane {
         }
     }
 
-    private ActionListener al=new ActionListener() {
+    private ActionListener al = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            File directory=new File(e.getActionCommand());
-            if (!fileSystemExplorer.openDirectory(directory))return;
+            File directory = new File(e.getActionCommand());
+            if (!fileSystemExplorer.openDirectory(directory)) return;
 
-            GUI gui=MainClass.getGui();
             gui.getCurrentExplorerPane().refreshContent();
             gui.getAdressPane().refreshContent();
         }

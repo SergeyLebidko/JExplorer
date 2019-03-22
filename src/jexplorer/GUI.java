@@ -19,17 +19,16 @@ public class GUI {
     private final JFrame frm;
 
     private ExplorerPane currentExplorerPane;
+    private FileSystemExplorer fileSystemExplorer;
 
-    private ExplorerPane rootPointExplorerPane;
+    private RootPointExplorerPane rootPointExplorerPane;
     private AdressPane adressPane;
 
     private JButton refreshPanesBtn;
-
     private JButton bigTileViewBtn;
     private JButton smallTileViewBtn;
     private JButton tableViewBtn;
     private JToggleButton showHiddenBtn;
-
     private JButton upBtn;
 
     public GUI() {
@@ -42,6 +41,8 @@ public class GUI {
             JOptionPane.showMessageDialog(null, "Возникла ошибка при попытке переключить стиль интерфейса. Работа программы будет прекращена", "Ошибка", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
+
+        fileSystemExplorer=MainClass.getFileSystemExplorer();
 
         //Создаем главное окно
         frm = new JFrame("JExplorer");
@@ -165,28 +166,23 @@ public class GUI {
     private ActionListener hiddenRevert = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentExplorerPane instanceof TileExplorerPane) {
-                boolean show = false;
-                if (showHiddenBtn.isSelected()) {
-                    show = true;
-                    showHiddenBtn.setToolTipText("Не показывать скрытые элементы");
-                }
-                if (!showHiddenBtn.isSelected()) {
-                    show = false;
-                    showHiddenBtn.setToolTipText("Показать скрытые элементы");
-                }
-
-                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
-                tileExplorerPane.setShowHiddenElements(show);
+            boolean show = false;
+            if (showHiddenBtn.isSelected()) {
+                show = true;
+                showHiddenBtn.setToolTipText("Не показывать скрытые элементы");
             }
+            if (!showHiddenBtn.isSelected()) {
+                show = false;
+                showHiddenBtn.setToolTipText("Показать скрытые элементы");
+            }
+            currentExplorerPane.setShowHiddenElements(show);
         }
     };
 
     private ActionListener toUpDirectory = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            FileSystemExplorer fileSystemExplorer=MainClass.getFileSystemExplorer();
-            if (!fileSystemExplorer.toUpDirectory())return;
+            if (!fileSystemExplorer.toUpDirectory()) return;
             currentExplorerPane.refreshContent();
             adressPane.refreshContent();
         }

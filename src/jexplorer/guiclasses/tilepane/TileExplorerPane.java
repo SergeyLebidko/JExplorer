@@ -1,14 +1,16 @@
 package jexplorer.guiclasses.tilepane;
 
+import jexplorer.GUI;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.MainClass;
+import jexplorer.guiclasses.adressPane.AdressPane;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.io.File;
+import java.util.HashMap;
 
 public class TileExplorerPane implements ExplorerPane {
 
@@ -17,6 +19,10 @@ public class TileExplorerPane implements ExplorerPane {
     private JLabel[] content;
     private AdaptiveGridLayout currentLayout;
     private FileSystemExplorer fileSystemExplorer;
+    private GUI gui;
+
+    //Контейнер, сопоставляющий значки на панели и пути к соответствующим элементам в файловой системе
+    private HashMap<JLabel, File> contentFileMap;
 
     private boolean showHiddenElements;
 
@@ -121,6 +127,7 @@ public class TileExplorerPane implements ExplorerPane {
 
     public TileExplorerPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
+        gui=MainClass.getGui();
         UIManager.put("ScrollBar.width", 20);
 
         contentPane = new JPanel();
@@ -137,23 +144,27 @@ public class TileExplorerPane implements ExplorerPane {
             }
         });
 
+        contentFileMap = new HashMap<>();
         showHiddenElements = false;
         refreshContent();
     }
 
+    //Метод, включающий режим "большие значки"
     public void setBigCells() {
         if (currentLayout.isSmallCells()) currentLayout.setSizeCells(AdaptiveGridLayout.BIG_CELLS);
         refreshContent();
     }
 
+    //Метод, включающий режим "маленькие значки"
     public void setSmallCells() {
         if (currentLayout.isBigCells()) currentLayout.setSizeCells(AdaptiveGridLayout.SMALL_CELLS);
         refreshContent();
     }
 
+    //Метод, управляющий отображением скрытых элементов
     public void setShowHiddenElements(boolean show) {
-        if (show==showHiddenElements)return;
-        showHiddenElements=show;
+        if (show == showHiddenElements) return;
+        showHiddenElements = show;
         refreshContent();
     }
 
@@ -162,8 +173,9 @@ public class TileExplorerPane implements ExplorerPane {
     }
 
     public void refreshContent() {
-        //Сперва очищаем панель контента от прежних элементов
+        //Сперва удаляем все прежние элементы
         clearContentPane();
+        contentFileMap.clear();
 
         //Добавляем на панель контента новые элементы
         File[] elements = fileSystemExplorer.getCurrentDirectoryElementsList();
@@ -175,6 +187,8 @@ public class TileExplorerPane implements ExplorerPane {
             if (!element.isDirectory()) continue;
             if (element.isHidden() & !showHiddenElements) continue;
             content[i] = new JLabel();
+            contentFileMap.put(content[i], element);
+            content[i].addMouseListener(ml);
             setParameters(element, content[i]);
             contentPane.add(content[i]);
             i++;
@@ -185,6 +199,8 @@ public class TileExplorerPane implements ExplorerPane {
             if (!element.isFile()) continue;
             if (element.isHidden() & !showHiddenElements) continue;
             content[i] = new JLabel();
+            contentFileMap.put(content[i], element);
+            content[i].addMouseListener(ml);
             setParameters(element, content[i]);
             contentPane.add(content[i]);
             i++;
@@ -202,6 +218,7 @@ public class TileExplorerPane implements ExplorerPane {
         }
     }
 
+    //Ниже идет группа методов, необходимых для установки параметров значков
     private void setParameters(File element, JLabel lab) {
         setText(element, lab);
         setIcon(element, lab);
@@ -246,5 +263,26 @@ public class TileExplorerPane implements ExplorerPane {
         lab.setVerticalTextPosition(SwingConstants.BOTTOM);
         lab.setHorizontalAlignment(SwingConstants.CENTER);
     }
+
+    //Обработчик кликов по элементам панели
+    private MouseListener ml = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON1) {
+                JLabel lab = (JLabel) e.getSource();
+                File file = contentFileMap.get(lab);
+                if (file.isFile()) {
+                    fileSystemExplorer.openFile(file);
+                    return;
+                }
+                if (file.isDirectory()) {
+                    fileSystemExplorer.openDirectory(file);
+                    AdressPane adressPane = gui.getAdressPane();
+                    adressPane.refreshContent();
+                    refreshContent();
+                }
+            }
+        }
+    };
 
 }

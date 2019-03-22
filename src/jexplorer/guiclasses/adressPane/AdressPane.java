@@ -12,16 +12,18 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.LinkedList;
 
-public class AdressPane implements ExplorerPane {
+public class AdressPane {
 
     private JScrollPane scrollPane;
     private JPanel contentPane;
     private FileSystemExplorer fileSystemExplorer;
+    private GUI gui;
 
     private final Color backColor = Color.WHITE;
 
     public AdressPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
+        gui=MainClass.getGui();
         UIManager.put("ScrollBar.width", 5);
 
         contentPane = new JPanel();
@@ -80,7 +82,6 @@ public class AdressPane implements ExplorerPane {
             File directory=new File(e.getActionCommand());
             if (!fileSystemExplorer.openDirectory(directory))return;
 
-            GUI gui=MainClass.getGui();
             gui.getCurrentExplorerPane().refreshContent();
             refreshContent();
         }
