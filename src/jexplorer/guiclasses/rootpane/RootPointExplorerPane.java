@@ -138,7 +138,7 @@ public class RootPointExplorerPane implements ExplorerPane {
         @Override
         public void actionPerformed(ActionEvent e) {
             File directory=new File(e.getActionCommand());
-            fileSystemExplorer.setCurrentDirectory(directory);
+            if (!fileSystemExplorer.openDirectory(directory))return;
 
             GUI gui=MainClass.getGui();
             gui.getCurrentExplorerPane().refreshContent();

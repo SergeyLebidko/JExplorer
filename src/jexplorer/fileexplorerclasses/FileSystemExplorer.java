@@ -1,7 +1,6 @@
 package jexplorer.fileexplorerclasses;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.LinkedList;
 
 public class FileSystemExplorer {
@@ -14,9 +13,11 @@ public class FileSystemExplorer {
         currentDirectory = getUserHomeDir();
     }
 
-    public void setCurrentDirectory(File directory){
-        if (directory.isFile())return;
+    //Метод метод переходит в каталог directory. Возвращает false, если это не удалось
+    public boolean openDirectory(File directory){
+        if (directory.isFile())return false;
         currentDirectory=directory;
+        return true;
     }
 
     //Метод возвращает список элементов (файлов и папок) текущего каталога
@@ -26,10 +27,21 @@ public class FileSystemExplorer {
         return result;
     }
 
+    //Метод возвращает текущий каталог
     public File getCurrentDirectory(){
         return currentDirectory;
     }
 
+    //Метод переходит в каталог родительский для текущего. Возвращает false, если это не удалось
+    public boolean toUpDirectory(){
+        File upDirectory;
+        upDirectory=currentDirectory.getParentFile();
+        if (upDirectory==null)return false;
+        currentDirectory=upDirectory;
+        return true;
+    }
+
+    //Метод возвращает список дисков
     public LinkedList<File> getDisks() {
         File[] roots = File.listRoots();
         LinkedList<File> result = new LinkedList<>();
@@ -40,12 +52,14 @@ public class FileSystemExplorer {
         return result;
     }
 
+    //Метод возвращает домашний каталог пользователя
     public File getUserHomeDir() {
         String pathToUserHome;
         pathToUserHome = System.getProperty("user.home");
         return new File(pathToUserHome);
     }
 
+    //Метод возвращает расширение файла file. Если передана ссылка на каталог - возвращает null
     public String getFileExtension(File file) {
         if (file.isDirectory()) return null;
         String nameFile = file.getName();
@@ -54,6 +68,7 @@ public class FileSystemExplorer {
         return (nameFile.substring(dotPos + 1)).toLowerCase();
     }
 
+    //Метод возвращает тип файла из перечисления типов FileTypes
     public FileTypes getFileType(File file) {
         if (file.isDirectory()) return null;
         String fileExtension = getFileExtension(file);

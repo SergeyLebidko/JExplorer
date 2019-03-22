@@ -9,8 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.LinkedList;
 
@@ -80,7 +78,7 @@ public class AdressPane implements ExplorerPane {
         @Override
         public void actionPerformed(ActionEvent e) {
             File directory=new File(e.getActionCommand());
-            fileSystemExplorer.setCurrentDirectory(directory);
+            if (!fileSystemExplorer.openDirectory(directory))return;
 
             GUI gui=MainClass.getGui();
             gui.getCurrentExplorerPane().refreshContent();

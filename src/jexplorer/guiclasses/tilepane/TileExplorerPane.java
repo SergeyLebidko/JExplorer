@@ -174,7 +174,6 @@ public class TileExplorerPane implements ExplorerPane {
             i++;
         }
 
-
         contentPane.revalidate();
         contentPane.repaint();
     }

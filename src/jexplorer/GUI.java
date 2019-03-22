@@ -1,5 +1,6 @@
 package jexplorer;
 
+import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
@@ -112,6 +113,7 @@ public class GUI {
         bigTileViewBtn.addActionListener(setBigTiles);
         smallTileViewBtn.addActionListener(setSmallTiles);
         showHiddenBtn.addActionListener(hiddenRevert);
+        upBtn.addActionListener(toUpDirectory);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
@@ -158,6 +160,8 @@ public class GUI {
         }
     };
 
+    //Вставить код для включения табличного вида
+
     private ActionListener hiddenRevert = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -175,6 +179,16 @@ public class GUI {
                 TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
                 tileExplorerPane.setShowHiddenElements(show);
             }
+        }
+    };
+
+    private ActionListener toUpDirectory = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            FileSystemExplorer fileSystemExplorer=MainClass.getFileSystemExplorer();
+            if (!fileSystemExplorer.toUpDirectory())return;
+            currentExplorerPane.refreshContent();
+            adressPane.refreshContent();
         }
     };
 
