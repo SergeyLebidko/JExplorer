@@ -19,7 +19,6 @@ public class TileExplorerPane implements ExplorerPane {
     private JLabel[] content;
     private AdaptiveGridLayout currentLayout;
     private FileSystemExplorer fileSystemExplorer;
-    private GUI gui;
 
     //Контейнер, сопоставляющий значки на панели и пути к соответствующим элементам в файловой системе
     private HashMap<JLabel, File> contentFileMap;
@@ -127,7 +126,6 @@ public class TileExplorerPane implements ExplorerPane {
 
     public TileExplorerPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
-        gui=MainClass.getGui();
         UIManager.put("ScrollBar.width", 20);
 
         contentPane = new JPanel();
@@ -178,7 +176,14 @@ public class TileExplorerPane implements ExplorerPane {
         contentFileMap.clear();
 
         //Добавляем на панель контента новые элементы
-        File[] elements = fileSystemExplorer.getCurrentDirectoryElementsList();
+        File[] elements;
+        try {
+            elements = fileSystemExplorer.getCurrentDirectoryElementsList();
+        } catch (Exception e) {
+            GUI gui = MainClass.getGui();
+            gui.showErrorDialog(e.getMessage());
+            return;
+        }
         content = new JLabel[elements.length];
         int i = 0;
 
@@ -268,15 +273,29 @@ public class TileExplorerPane implements ExplorerPane {
     private MouseListener ml = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON1) {
+            if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1) {
                 JLabel lab = (JLabel) e.getSource();
                 File file = contentFileMap.get(lab);
+                GUI gui = MainClass.getGui();
+                if (!file.exists()){
+                    gui.showErrorDialog("Не получается открыть "+file.getName());
+                    return;
+                }
                 if (file.isFile()) {
-                    fileSystemExplorer.openFile(file);
+                    try {
+                        fileSystemExplorer.openFile(file);
+                    } catch (Exception ex) {
+                        gui.showErrorDialog(ex.getMessage());
+                    }
                     return;
                 }
                 if (file.isDirectory()) {
-                    fileSystemExplorer.openDirectory(file);
+                    try {
+                        fileSystemExplorer.openDirectory(file);
+                    } catch (Exception ex) {
+                        gui.showErrorDialog(ex.getMessage());
+                        return;
+                    }
                     AdressPane adressPane = gui.getAdressPane();
                     adressPane.refreshContent();
                     refreshContent();

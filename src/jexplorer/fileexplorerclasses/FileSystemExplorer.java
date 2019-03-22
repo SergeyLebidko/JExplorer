@@ -16,38 +16,45 @@ public class FileSystemExplorer {
     }
 
     //Метод метод переходит в каталог directory. Возвращает false, если это не удалось
-    public boolean openDirectory(File directory){
-        if (directory.isFile())return false;
-        currentDirectory=directory;
-        return true;
+    public void openDirectory(File directory) throws Exception {
+        if (directory.isFile()) return;
+        if (!directory.exists() || !directory.canRead() || directory.listFiles()==null) {
+            throw new Exception("Не получается открыть " + directory.getName());
+        }
+        currentDirectory = directory;
     }
 
     //Метод открывает файл, используя средства операционной системы
-    public void openFile(File file){
-        if (file.isDirectory())return;
+    public void openFile(File file) throws Exception {
+        if (file.isDirectory()) return;
         try {
             Desktop.getDesktop().open(file);
-        } catch (IOException e) {}
+        } catch (IOException e) {
+            throw new Exception("Не получается открыть: " + file.getName());
+        }
     }
 
     //Метод возвращает список элементов (файлов и папок) текущего каталога
-    public File[] getCurrentDirectoryElementsList() {
+    public File[] getCurrentDirectoryElementsList() throws Exception {
         File[] result;
         result = currentDirectory.listFiles();
+        if (result == null) {
+            throw new Exception("Не могу прочитать содержимое папки " + currentDirectory.getName());
+        }
         return result;
     }
 
     //Метод возвращает текущий каталог
-    public File getCurrentDirectory(){
+    public File getCurrentDirectory() {
         return currentDirectory;
     }
 
     //Метод переходит в каталог родительский для текущего. Возвращает false, если это не удалось
-    public boolean toUpDirectory(){
+    public boolean toUpDirectory() {
         File upDirectory;
-        upDirectory=currentDirectory.getParentFile();
-        if (upDirectory==null)return false;
-        currentDirectory=upDirectory;
+        upDirectory = currentDirectory.getParentFile();
+        if (upDirectory == null) return false;
+        currentDirectory = upDirectory;
         return true;
     }
 
@@ -83,9 +90,9 @@ public class FileSystemExplorer {
         if (file.isDirectory()) return null;
         String fileExtension = getFileExtension(file);
 
-        for (FileTypes type: FileTypes.values()){             //Во внешнем цикле перебираем типы
-            for (String ext: type.getExtensionsSet()){        //Во внутреннем - связанные с этими типа расширения
-                if (fileExtension.equals(ext))return type;
+        for (FileTypes type : FileTypes.values()) {             //Во внешнем цикле перебираем типы
+            for (String ext : type.getExtensionsSet()) {        //Во внутреннем - связанные с этими типа расширения
+                if (fileExtension.equals(ext)) return type;
             }
         }
 

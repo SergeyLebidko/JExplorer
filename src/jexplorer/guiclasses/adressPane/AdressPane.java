@@ -3,7 +3,6 @@ package jexplorer.guiclasses.adressPane;
 import jexplorer.GUI;
 import jexplorer.MainClass;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
-import jexplorer.guiclasses.ExplorerPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,13 +16,11 @@ public class AdressPane {
     private JScrollPane scrollPane;
     private JPanel contentPane;
     private FileSystemExplorer fileSystemExplorer;
-    private GUI gui;
 
     private final Color backColor = Color.WHITE;
 
     public AdressPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
-        gui=MainClass.getGui();
         UIManager.put("ScrollBar.width", 5);
 
         contentPane = new JPanel();
@@ -80,8 +77,13 @@ public class AdressPane {
         @Override
         public void actionPerformed(ActionEvent e) {
             File directory=new File(e.getActionCommand());
-            if (!fileSystemExplorer.openDirectory(directory))return;
-
+            GUI gui=MainClass.getGui();
+            try {
+                fileSystemExplorer.openDirectory(directory);
+            }catch (Exception ex){
+                gui.showErrorDialog(ex.getMessage());
+                return;
+            }
             gui.getCurrentExplorerPane().refreshContent();
             refreshContent();
         }

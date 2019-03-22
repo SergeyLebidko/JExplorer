@@ -1,7 +1,6 @@
 package jexplorer.guiclasses.rootpane;
 
 import jexplorer.GUI;
-import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.MainClass;
 
@@ -21,7 +20,6 @@ public class RootPointExplorerPane {
     private JButton[] content;
     private StackLayout currentLayout;
     private FileSystemExplorer fileSystemExplorer;
-    private GUI gui;
 
     private final Color backColor = Color.WHITE;
 
@@ -66,7 +64,6 @@ public class RootPointExplorerPane {
 
     public RootPointExplorerPane() {
         fileSystemExplorer = MainClass.getFileSystemExplorer();
-        gui = MainClass.getGui();
         UIManager.put("ScrollBar.width", 20);
 
         contentPane = new JPanel();
@@ -142,8 +139,12 @@ public class RootPointExplorerPane {
         @Override
         public void actionPerformed(ActionEvent e) {
             File directory = new File(e.getActionCommand());
-            if (!fileSystemExplorer.openDirectory(directory)) return;
-
+            GUI gui = MainClass.getGui();
+            try {
+                fileSystemExplorer.openDirectory(directory);
+            } catch (Exception ex) {
+                gui.showErrorDialog(ex.getMessage());
+            }
             gui.getCurrentExplorerPane().refreshContent();
             gui.getAdressPane().refreshContent();
         }

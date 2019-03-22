@@ -124,6 +124,10 @@ public class GUI {
         frm.setVisible(true);
     }
 
+    public void showErrorDialog(String msg){
+        JOptionPane.showMessageDialog(frm,msg,"Ошибка",JOptionPane.ERROR_MESSAGE);
+    }
+
     public ExplorerPane getCurrentExplorerPane() {
         return currentExplorerPane;
     }
