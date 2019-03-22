@@ -1,6 +1,8 @@
 package jexplorer.fileexplorerclasses;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 
 public class FileSystemExplorer {
@@ -18,6 +20,14 @@ public class FileSystemExplorer {
         if (directory.isFile())return false;
         currentDirectory=directory;
         return true;
+    }
+
+    //Метод открывает файл, используя средства операционной системы
+    public void openFile(File file){
+        if (file.isDirectory())return;
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException e) {}
     }
 
     //Метод возвращает список элементов (файлов и папок) текущего каталога

@@ -141,6 +141,22 @@ public class TileExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
+    public void setBigCells() {
+        if (currentLayout.isSmallCells()) currentLayout.setSizeCells(AdaptiveGridLayout.BIG_CELLS);
+        refreshContent();
+    }
+
+    public void setSmallCells() {
+        if (currentLayout.isBigCells()) currentLayout.setSizeCells(AdaptiveGridLayout.SMALL_CELLS);
+        refreshContent();
+    }
+
+    public void setShowHiddenElements(boolean show) {
+        if (show==showHiddenElements)return;
+        showHiddenElements=show;
+        refreshContent();
+    }
+
     public Component getVisualComponent() {
         return scrollPane;
     }
@@ -176,22 +192,6 @@ public class TileExplorerPane implements ExplorerPane {
 
         contentPane.revalidate();
         contentPane.repaint();
-    }
-
-    public void setBigCells() {
-        if (currentLayout.isSmallCells()) currentLayout.setSizeCells(AdaptiveGridLayout.BIG_CELLS);
-        refreshContent();
-    }
-
-    public void setSmallCells() {
-        if (currentLayout.isBigCells()) currentLayout.setSizeCells(AdaptiveGridLayout.SMALL_CELLS);
-        refreshContent();
-    }
-
-    public void setShowHiddenElements(boolean show) {
-        if (show==showHiddenElements)return;
-        showHiddenElements=show;
-        refreshContent();
     }
 
     private void clearContentPane() {
