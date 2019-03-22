@@ -186,7 +186,12 @@ public class GUI {
     private ActionListener toUpDirectory = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!fileSystemExplorer.toUpDirectory()) return;
+            try {
+                fileSystemExplorer.toUpDirectory();
+            } catch (Exception ex) {
+                showErrorDialog(ex.getMessage());
+                return;
+            }
             currentExplorerPane.refreshContent();
             adressPane.refreshContent();
         }

@@ -52,12 +52,11 @@ public class FileSystemExplorer {
     }
 
     //Метод переходит в каталог родительский для текущего. Возвращает false, если это не удалось
-    public boolean toUpDirectory() {
+    public void toUpDirectory() throws Exception {
         File upDirectory;
         upDirectory = currentDirectory.getParentFile();
-        if (upDirectory == null) return false;
-        currentDirectory = upDirectory;
-        return true;
+        if (upDirectory == null) return;
+        openDirectory(upDirectory);
     }
 
     //Метод возвращает список дисков
