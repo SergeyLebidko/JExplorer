@@ -19,7 +19,9 @@ public class FileSystemExplorer {
     public void openDirectory(File directory) throws Exception {
         if (directory.isFile()) return;
         if (!directory.exists() || !directory.canRead() || directory.listFiles()==null) {
-            throw new Exception("Не получается открыть " + directory.getName());
+            String name=directory.getName();
+            if (name.equals(""))name=directory.getAbsolutePath();
+            throw new Exception("Не получается открыть " + name);
         }
         currentDirectory = directory;
     }

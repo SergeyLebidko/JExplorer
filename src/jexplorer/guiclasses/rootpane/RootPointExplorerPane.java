@@ -144,6 +144,10 @@ public class RootPointExplorerPane {
                 fileSystemExplorer.openDirectory(directory);
             } catch (Exception ex) {
                 gui.showErrorDialog(ex.getMessage());
+                refreshContent();
+                try {
+                    fileSystemExplorer.openDirectory(fileSystemExplorer.getUserHomeDir());
+                } catch (Exception e1) {}
             }
             gui.getCurrentExplorerPane().refreshContent();
             gui.getAdressPane().refreshContent();
