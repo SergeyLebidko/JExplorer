@@ -18,8 +18,9 @@ public class GUI {
 
     private final JFrame frm;
 
-    private ExplorerPane currentExplorerPane;
     private FileSystemExplorer fileSystemExplorer;
+
+    private ExplorerPane currentExplorerPane;
 
     private RootPointExplorerPane rootPointExplorerPane;
     private AdressPane adressPane;
@@ -29,7 +30,38 @@ public class GUI {
     private JButton smallTileViewBtn;
     private JButton tableViewBtn;
     private JToggleButton showHiddenBtn;
+    private String commandToShowHiddenBtn = "btn_element";
+
     private JButton upBtn;
+
+    private JMenu fileMenu;
+    private JMenuItem exitItem;
+
+    private JMenu sortedMenu;
+    private JRadioButtonMenuItem sortedByNameItem;
+    private JRadioButtonMenuItem sortedBySizeItem;
+    private JRadioButtonMenuItem sortedByTypeItem;
+    private JRadioButtonMenuItem sortedByExtensionItem;
+    private JRadioButtonMenuItem sortedByDateCreatedItem;
+    private JRadioButtonMenuItem sortedByDateModifiedItem;
+    private JRadioButtonMenuItem orderToUpItem;
+    private JRadioButtonMenuItem orderToDownItem;
+
+    private ButtonGroup sortedGroup;
+    private ButtonGroup orderGroup;
+
+    private JMenu viewMunu;
+    private JRadioButtonMenuItem bigTilesItem;
+    private JRadioButtonMenuItem smallTilesItem;
+    private JRadioButtonMenuItem tableItem;
+
+    private JCheckBoxMenuItem showHiddenItem;
+    private String commandToShowHiddenItem = "menu_element";
+
+    private ButtonGroup viewGroup;
+
+    private JMenu helpMenu;
+    private JMenuItem aboutItem;
 
     public GUI() {
 
@@ -42,7 +74,7 @@ public class GUI {
             System.exit(0);
         }
 
-        fileSystemExplorer=MainClass.getFileSystemExplorer();
+        fileSystemExplorer = MainClass.getFileSystemExplorer();
 
         //Создаем главное окно
         frm = new JFrame("JExplorer");
@@ -70,6 +102,7 @@ public class GUI {
         showHiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
         showHiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
         showHiddenBtn.setToolTipText("Сейчас скрытые элементы не отображаются");
+        showHiddenBtn.setActionCommand(commandToShowHiddenBtn);
         bigTileViewBtn = new JButton(new ImageIcon("res\\big_tiles.png"));
         bigTileViewBtn.setToolTipText("Крупные значки");
         smallTileViewBtn = new JButton(new ImageIcon("res\\small_tiles.png"));
@@ -109,12 +142,93 @@ public class GUI {
         upPane.add(Box.createHorizontalStrut(5));
         upPane.add(adressPane.getVisualComponent());
 
-        //Добавляем компонентам слушатели событий
-        refreshPanesBtn.addActionListener(refreshPanesBtnListener);
-        bigTileViewBtn.addActionListener(bigTilesBtnListener);
-        smallTileViewBtn.addActionListener(smallTilesBtnListener);
-        showHiddenBtn.addActionListener(hiddenBtnListener);
-        upBtn.addActionListener(upBtnListener);
+        //Создаем главное меню и его элементы
+        JMenuBar mainMenu = new JMenuBar();
+        mainMenu.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
+        fileMenu = new JMenu("Файл");
+        exitItem = new JMenuItem("Выход");
+        fileMenu.add(exitItem);
+
+        sortedMenu = new JMenu("Сортировка");
+        sortedByNameItem = new JRadioButtonMenuItem("По имени", true);
+        sortedBySizeItem = new JRadioButtonMenuItem("По размеру");
+        sortedByTypeItem = new JRadioButtonMenuItem("По типу");
+        sortedByExtensionItem = new JRadioButtonMenuItem("По расширению");
+        sortedByDateCreatedItem = new JRadioButtonMenuItem("По дате создания");
+        sortedByDateModifiedItem = new JRadioButtonMenuItem("По дате изменения");
+
+        sortedGroup = new ButtonGroup();
+        sortedGroup.add(sortedByNameItem);
+        sortedGroup.add(sortedBySizeItem);
+        sortedGroup.add(sortedByTypeItem);
+        sortedGroup.add(sortedByExtensionItem);
+        sortedGroup.add(sortedByDateCreatedItem);
+        sortedGroup.add(sortedByDateModifiedItem);
+
+        orderToUpItem = new JRadioButtonMenuItem("По возрастанию", true);
+        orderToDownItem = new JRadioButtonMenuItem("По убыванию");
+
+        orderGroup = new ButtonGroup();
+        orderGroup.add(orderToUpItem);
+        orderGroup.add(orderToDownItem);
+
+        sortedMenu.add(sortedByNameItem);
+        sortedMenu.add(sortedBySizeItem);
+        sortedMenu.add(sortedByTypeItem);
+        sortedMenu.add(sortedByExtensionItem);
+        sortedMenu.add(sortedByDateCreatedItem);
+        sortedMenu.add(sortedByDateModifiedItem);
+        sortedMenu.addSeparator();
+        sortedMenu.add(orderToUpItem);
+        sortedMenu.add(orderToDownItem);
+
+        viewMunu = new JMenu("Вид");
+        bigTilesItem = new JRadioButtonMenuItem("Крупные значки", true);
+        smallTilesItem = new JRadioButtonMenuItem("Мелкие значки");
+        tableItem = new JRadioButtonMenuItem("Таблица");
+
+        viewGroup = new ButtonGroup();
+        viewGroup.add(bigTilesItem);
+        viewGroup.add(smallTilesItem);
+        viewGroup.add(tableItem);
+
+        showHiddenItem = new JCheckBoxMenuItem("Отображать скрытые элементы", false);
+        showHiddenItem.setActionCommand(commandToShowHiddenItem);
+
+        viewMunu.add(bigTilesItem);
+        viewMunu.add(smallTilesItem);
+        viewMunu.add(tableItem);
+        viewMunu.addSeparator();
+        viewMunu.add(showHiddenItem);
+
+        helpMenu = new JMenu("Помощь");
+        aboutItem = new JMenuItem("О программе");
+
+        helpMenu.add(aboutItem);
+
+        //Добавляем созданные элементы в главное меню
+        mainMenu.add(fileMenu);
+        mainMenu.add(sortedMenu);
+        mainMenu.add(viewMunu);
+        mainMenu.add(helpMenu);
+
+        //Добавляем элементам меню слушатели событий
+        exitItem.addActionListener(exitListener);
+        bigTilesItem.addActionListener(bigTilesListener);
+        smallTilesItem.addActionListener(smallTilesListener);
+
+        showHiddenItem.addActionListener(hiddenListener);
+
+        //Добавляем меню в главное окно
+        frm.setJMenuBar(mainMenu);
+
+        //Добавляем кнопкам слушатели событий
+        refreshPanesBtn.addActionListener(refreshPanesListener);
+        bigTileViewBtn.addActionListener(bigTilesListener);
+        smallTileViewBtn.addActionListener(smallTilesListener);
+        showHiddenBtn.addActionListener(hiddenListener);
+        upBtn.addActionListener(upListener);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
@@ -124,8 +238,8 @@ public class GUI {
         frm.setVisible(true);
     }
 
-    public void showErrorDialog(String msg){
-        JOptionPane.showMessageDialog(frm,msg,"Ошибка",JOptionPane.ERROR_MESSAGE);
+    public void showErrorDialog(String msg) {
+        JOptionPane.showMessageDialog(frm, msg, "Ошибка", JOptionPane.ERROR_MESSAGE);
     }
 
     public ExplorerPane getCurrentExplorerPane() {
@@ -136,7 +250,8 @@ public class GUI {
         return adressPane;
     }
 
-    private ActionListener refreshPanesBtnListener = new ActionListener() {
+    //Ниже идет группа анонимных классов - обработчиков событий
+    private ActionListener refreshPanesListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             rootPointExplorerPane.refreshContent();
@@ -145,7 +260,7 @@ public class GUI {
         }
     };
 
-    private ActionListener bigTilesBtnListener = new ActionListener() {
+    private ActionListener bigTilesListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentExplorerPane instanceof TileExplorerPane) {
@@ -155,7 +270,7 @@ public class GUI {
         }
     };
 
-    private ActionListener smallTilesBtnListener = new ActionListener() {
+    private ActionListener smallTilesListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentExplorerPane instanceof TileExplorerPane) {
@@ -167,23 +282,33 @@ public class GUI {
 
     //Вставить код для включения табличного вида
 
-    private ActionListener hiddenBtnListener = new ActionListener() {
+    private ActionListener hiddenListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean show = false;
-            if (showHiddenBtn.isSelected()) {
-                show = true;
-                showHiddenBtn.setToolTipText("Сейчас срытые элементы отображаются");
+            String actionCommand = e.getActionCommand();
+
+            if (actionCommand.equals(commandToShowHiddenItem)) {
+                show = showHiddenItem.isSelected();
             }
-            if (!showHiddenBtn.isSelected()) {
-                show = false;
+            if (actionCommand.equals(commandToShowHiddenBtn)) {
+                show = showHiddenBtn.isSelected();
+            }
+
+            showHiddenItem.setSelected(show);
+            showHiddenBtn.setSelected(show);
+
+            if (show) {
+                showHiddenBtn.setToolTipText("Сейчас срытые элементы отображаются");
+            }else{
                 showHiddenBtn.setToolTipText("Сейчас скрытые элементы не отображаются");
             }
+
             currentExplorerPane.setShowHiddenElements(show);
         }
     };
 
-    private ActionListener upBtnListener = new ActionListener() {
+    private ActionListener upListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -194,6 +319,13 @@ public class GUI {
             }
             currentExplorerPane.refreshContent();
             adressPane.refreshContent();
+        }
+    };
+
+    private ActionListener exitListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
         }
     };
 
