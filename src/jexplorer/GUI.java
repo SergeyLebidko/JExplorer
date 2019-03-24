@@ -110,11 +110,11 @@ public class GUI {
         upPane.add(adressPane.getVisualComponent());
 
         //Добавляем компонентам слушатели событий
-        refreshPanesBtn.addActionListener(refreshPanes);
-        bigTileViewBtn.addActionListener(setBigTiles);
-        smallTileViewBtn.addActionListener(setSmallTiles);
-        showHiddenBtn.addActionListener(hiddenRevert);
-        upBtn.addActionListener(toUpDirectory);
+        refreshPanesBtn.addActionListener(refreshPanesBtnListener);
+        bigTileViewBtn.addActionListener(bigTilesBtnListener);
+        smallTileViewBtn.addActionListener(smallTilesBtnListener);
+        showHiddenBtn.addActionListener(hiddenBtnListener);
+        upBtn.addActionListener(upBtnListener);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
@@ -136,7 +136,7 @@ public class GUI {
         return adressPane;
     }
 
-    private ActionListener refreshPanes = new ActionListener() {
+    private ActionListener refreshPanesBtnListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             rootPointExplorerPane.refreshContent();
@@ -145,7 +145,7 @@ public class GUI {
         }
     };
 
-    private ActionListener setBigTiles = new ActionListener() {
+    private ActionListener bigTilesBtnListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentExplorerPane instanceof TileExplorerPane) {
@@ -155,7 +155,7 @@ public class GUI {
         }
     };
 
-    private ActionListener setSmallTiles = new ActionListener() {
+    private ActionListener smallTilesBtnListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentExplorerPane instanceof TileExplorerPane) {
@@ -167,7 +167,7 @@ public class GUI {
 
     //Вставить код для включения табличного вида
 
-    private ActionListener hiddenRevert = new ActionListener() {
+    private ActionListener hiddenBtnListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean show = false;
@@ -183,7 +183,7 @@ public class GUI {
         }
     };
 
-    private ActionListener toUpDirectory = new ActionListener() {
+    private ActionListener upBtnListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {

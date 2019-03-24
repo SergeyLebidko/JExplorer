@@ -1,5 +1,6 @@
 package jexplorer;
 
+import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 
 import javax.swing.*;
@@ -8,6 +9,8 @@ public class MainClass {
 
     //Объект для перемещения по каталогам файловой системы. Он общий для всех классов проекта
     private static FileSystemExplorer fileSystemExplorer=new FileSystemExplorer();
+
+    private static FileSorter fileSorter=new FileSorter();
 
     //Объект GUI, создающий все компоненты окна приложения
     private static GUI gui;
@@ -27,6 +30,10 @@ public class MainClass {
 
     public static GUI getGui(){
         return gui;
+    }
+
+    public static FileSorter getFileSorter() {
+        return fileSorter;
     }
 
 }
