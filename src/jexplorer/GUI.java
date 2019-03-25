@@ -1,6 +1,9 @@
 package jexplorer;
 
+import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
+import jexplorer.fileexplorerclasses.SortMethods;
+import jexplorer.fileexplorerclasses.SortOrders;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
@@ -152,11 +155,17 @@ public class GUI {
 
         sortedMenu = new JMenu("Сортировка");
         sortedByNameItem = new JRadioButtonMenuItem("По имени", true);
+        sortedByNameItem.setActionCommand(SortMethods.BY_NAME.getName());
         sortedBySizeItem = new JRadioButtonMenuItem("По размеру");
+        sortedBySizeItem.setActionCommand(SortMethods.BY_SIZE.getName());
         sortedByTypeItem = new JRadioButtonMenuItem("По типу");
+        sortedByTypeItem.setActionCommand(SortMethods.BY_TYPE.getName());
         sortedByExtensionItem = new JRadioButtonMenuItem("По расширению");
+        sortedByExtensionItem.setActionCommand(SortMethods.BY_EXTENSION.getName());
         sortedByDateCreatedItem = new JRadioButtonMenuItem("По дате создания");
+        sortedByDateCreatedItem.setActionCommand(SortMethods.BY_DATE_CREATED.getName());
         sortedByDateModifiedItem = new JRadioButtonMenuItem("По дате изменения");
+        sortedByDateModifiedItem.setActionCommand(SortMethods.BY_DATE_MODIFIED.getName());
 
         sortedGroup = new ButtonGroup();
         sortedGroup.add(sortedByNameItem);
@@ -167,7 +176,9 @@ public class GUI {
         sortedGroup.add(sortedByDateModifiedItem);
 
         orderToUpItem = new JRadioButtonMenuItem("По возрастанию", true);
+        orderToUpItem.setActionCommand(SortOrders.TO_UP.getName());
         orderToDownItem = new JRadioButtonMenuItem("По убыванию");
+        orderToDownItem.setActionCommand(SortOrders.TO_DOWN.getName());
 
         orderGroup = new ButtonGroup();
         orderGroup.add(orderToUpItem);
@@ -215,10 +226,21 @@ public class GUI {
 
         //Добавляем элементам меню слушатели событий
         exitItem.addActionListener(exitListener);
+
         bigTilesItem.addActionListener(bigTilesListener);
         smallTilesItem.addActionListener(smallTilesListener);
-
+        //tableItem.addActionListener(???);
         showHiddenItem.addActionListener(hiddenListener);
+
+        sortedByNameItem.addActionListener(setSortedType);
+        sortedBySizeItem.addActionListener(setSortedType);
+        sortedByTypeItem.addActionListener(setSortedType);
+        sortedByExtensionItem.addActionListener(setSortedType);
+        sortedByDateCreatedItem.addActionListener(setSortedType);
+        sortedByDateModifiedItem.addActionListener(setSortedType);
+
+        orderToUpItem.addActionListener(setSortedOrder);
+        orderToDownItem.addActionListener(setSortedOrder);
 
         aboutItem.addActionListener(aboutListener);
 
@@ -336,6 +358,32 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             String msg = "<html>Простой файловый менеджер на Java<br>Автор: Сергей Лебидко. 2019 г.<br><br>Набор иконок для приложения взят с сайта icon-icons.com";
             JOptionPane.showMessageDialog(frm, msg, "О программе", JOptionPane.PLAIN_MESSAGE);
+        }
+    };
+
+    private ActionListener setSortedType = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            FileSorter fileSorter = MainClass.getFileSorter();
+            SortMethods currentSortedType = fileSorter.getCurrentSortType();
+            SortMethods choiceSortedType = SortMethods.valueOf(e.getActionCommand());
+            if (choiceSortedType != currentSortedType) {
+                fileSorter.setSortType(choiceSortedType);
+                currentExplorerPane.refreshContent();
+            }
+        }
+    };
+
+    private ActionListener setSortedOrder = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            FileSorter fileSorter = MainClass.getFileSorter();
+            SortOrders currentSortedOrder = fileSorter.getCurrentSortOrder();
+            SortOrders choiceSortedOrder = SortOrders.valueOf(e.getActionCommand());
+            if (choiceSortedOrder!=currentSortedOrder){
+                fileSorter.setSortOrder(choiceSortedOrder);
+                currentExplorerPane.refreshContent();
+            }
         }
     };
 

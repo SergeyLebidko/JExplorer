@@ -152,13 +152,13 @@ public class FileSorter {
         File[] dirs;
 
         //Делим исходный список на два списка: список файлов и список каталогов
-        files = getFils(list);
+        files = getFiles(list);
         dirs = getDirs(list);
 
         return list;
     }
 
-    private File[] getFils(File[] files) {
+    private File[] getFiles(File[] files) {
         List<File> filesList = new LinkedList<>();
         for (File file : files) {
             if (file.isFile()) filesList.add(file);

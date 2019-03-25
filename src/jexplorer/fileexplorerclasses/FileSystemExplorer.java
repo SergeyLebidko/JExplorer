@@ -1,5 +1,7 @@
 package jexplorer.fileexplorerclasses;
 
+import jexplorer.MainClass;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +48,9 @@ public class FileSystemExplorer {
         if (result == null) {
             throw new Exception("Не могу прочитать содержимое папки " + currentDirectory.getName());
         }
-        return result;
+
+        FileSorter fileSorter= MainClass.getFileSorter();
+        return fileSorter.sort(result);
     }
 
     //Метод возвращает текущий каталог
