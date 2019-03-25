@@ -3,6 +3,9 @@ package jexplorer.fileexplorerclasses;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Date;
 import java.util.LinkedList;
 
 public class FileSystemExplorer {
@@ -86,7 +89,7 @@ public class FileSystemExplorer {
         return (nameFile.substring(dotPos + 1)).toLowerCase();
     }
 
-    //Метод возвращает тип файла из перечисления типов FileTypes
+    //Метод возвращает тип файла file. Перечень типов файлов определен в перечеслении FileTypes. Если передана ссылка на каталог - возвращает null
     public FileTypes getFileType(File file) {
         if (file.isDirectory()) return null;
         String fileExtension = getFileExtension(file);
@@ -98,6 +101,28 @@ public class FileSystemExplorer {
         }
 
         return FileTypes.OTHER;
+    }
+
+    //Метод возвращает дату создания объекта
+    public Date getDateCreated(File file) throws Exception {
+        BasicFileAttributes attr = null;
+        try {
+            attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+        } catch (IOException e) {
+            throw new Exception("Не удалось получить дату создания");
+        }
+        return new Date(attr.creationTime().toMillis());
+    }
+
+    //Метод возвращает дату последней модификации объекта
+    public Date getDateModified(File file) throws Exception {
+        BasicFileAttributes attr = null;
+        try {
+            attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+        } catch (IOException e) {
+            throw new Exception("Не удалось получить дату последнего изменения");
+        }
+        return new Date(attr.lastModifiedTime().toMillis());
     }
 
 }

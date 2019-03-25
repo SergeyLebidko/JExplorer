@@ -10,6 +10,7 @@ public class MainClass {
     //Объект для перемещения по каталогам файловой системы. Он общий для всех классов проекта
     private static FileSystemExplorer fileSystemExplorer=new FileSystemExplorer();
 
+    //Объект для сортировки списков файлов и папок
     private static FileSorter fileSorter=new FileSorter();
 
     //Объект GUI, создающий все компоненты окна приложения

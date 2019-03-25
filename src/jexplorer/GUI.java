@@ -220,6 +220,8 @@ public class GUI {
 
         showHiddenItem.addActionListener(hiddenListener);
 
+        aboutItem.addActionListener(aboutListener);
+
         //Добавляем меню в главное окно
         frm.setJMenuBar(mainMenu);
 
@@ -300,7 +302,7 @@ public class GUI {
 
             if (show) {
                 showHiddenBtn.setToolTipText("Сейчас срытые элементы отображаются");
-            }else{
+            } else {
                 showHiddenBtn.setToolTipText("Сейчас скрытые элементы не отображаются");
             }
 
@@ -326,6 +328,14 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             System.exit(0);
+        }
+    };
+
+    private ActionListener aboutListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String msg = "<html>Простой файловый менеджер на Java<br>Автор: Сергей Лебидко. 2019 г.<br><br>Набор иконок для приложения взят с сайта icon-icons.com";
+            JOptionPane.showMessageDialog(frm, msg, "О программе", JOptionPane.PLAIN_MESSAGE);
         }
     };
 
