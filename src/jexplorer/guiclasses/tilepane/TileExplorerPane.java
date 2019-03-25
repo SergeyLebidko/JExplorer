@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 
 public class TileExplorerPane implements ExplorerPane {
@@ -225,16 +227,53 @@ public class TileExplorerPane implements ExplorerPane {
 
     //Ниже идет группа методов, необходимых для установки параметров значков
     private void setParameters(File element, JLabel lab) {
-        setText(element, lab);
+        setTexts(element, lab);
         setIcon(element, lab);
         setTextColors(element, lab);
         setBorders(lab);
         setAligments(lab);
     }
 
-    private void setText(File element, JLabel lab) {
+    private void setTexts(File element, JLabel lab) {
         lab.setText(element.getName());
-        lab.setToolTipText(element.getName());
+        String toolTipText="<html>";
+        toolTipText+=element.getName();
+
+        NumberFormat nf=NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(2);
+        if (element.isFile()){
+            long size;
+            String postFix="";
+            size=element.length();
+            if (size<1024){
+                postFix=nf.format(size)+" б.";
+            }
+            if (size>=1024 & size<1048576){
+                postFix=nf.format((double) size/1024)+" Кб.";
+            }
+            if (size>=1048576 & size<1073741824){
+                postFix=nf.format((double)size/1048576)+" Мб.";
+            }
+            if (size>=1073741824){
+                postFix=nf.format((double)size/1073741824)+" Гб.";
+            }
+            toolTipText+="<br>Размер: "+postFix;
+        }
+
+        DateFormat df=DateFormat.getDateInstance();
+        try {
+            toolTipText+="<br>Дата создания: "+df.format(fileSystemExplorer.getDateCreated(element));
+        } catch (Exception e) {
+            toolTipText+="Не удалось установить дату создания";
+        }
+
+        try {
+            toolTipText+="<br>Дата последнего изменения: "+df.format(fileSystemExplorer.getDateModified(element));
+        } catch (Exception e) {
+            toolTipText+="Не удалось установить дату последнего изменения";
+        }
+
+        lab.setToolTipText(toolTipText);
     }
 
     private void setIcon(File element, JLabel lab) {
