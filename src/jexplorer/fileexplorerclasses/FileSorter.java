@@ -3,10 +3,7 @@ package jexplorer.fileexplorerclasses;
 import jexplorer.MainClass;
 
 import java.io.File;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class FileSorter {
 
@@ -60,6 +57,7 @@ public class FileSorter {
             if (num1 > num2) result = 1;
             return currentSortOrder.getOrder() * result;
         }
+
     }
 
     //Компаратор для сортировки объектов по расширению (применим только к файлам)
@@ -136,7 +134,7 @@ public class FileSorter {
     }
 
     public void setSortOrder(SortOrders order) {
-
+        currentSortOrder = order;
     }
 
     public SortMethods getCurrentSortType() {
@@ -155,7 +153,45 @@ public class FileSorter {
         files = getFiles(list);
         dirs = getDirs(list);
 
-        return list;
+        //Выбираем необходимый компаратор
+        switch (currentSortType) {
+            case BY_NAME: {
+                Arrays.sort(dirs, nameComparator);
+                Arrays.sort(files, nameComparator);
+                break;
+            }
+            case BY_SIZE: {
+                Arrays.sort(files, sizeComparator);
+                break;
+            }
+            case BY_TYPE: {
+                Arrays.sort(files, typeComparator);
+                break;
+            }
+            case BY_EXTENSION: {
+                Arrays.sort(files, extensionComparator);
+                break;
+            }
+            case BY_DATE_CREATED: {
+                Arrays.sort(dirs, dateCreatedComparator);
+                Arrays.sort(files, dateCreatedComparator);
+                break;
+            }
+            case BY_DATE_MODIFIED: {
+                Arrays.sort(dirs, byDateModifiedComparator);
+                Arrays.sort(files, byDateModifiedComparator);
+            }
+        }
+
+        List<File> result = new LinkedList<>();
+        for (File f : dirs) {
+            result.add(f);
+        }
+        for (File f : files) {
+            result.add(f);
+        }
+
+        return result.toArray(new File[dirs.length + files.length]);
     }
 
     private File[] getFiles(File[] files) {
