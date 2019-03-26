@@ -87,16 +87,10 @@ public class FileSystemExplorer {
     //Метод возвращает имя файла (без расширения). Если передана ссылка на каталог - возвращает null
     public String getFileName(File file) {
         if (file.isDirectory()) return null;
-        String extension = getFileExtension(file);
-        String name = file.getName();
-        String result = "";
-        if (extension.equals("")) {
-            result = file.getName();
-        } else {
-            int pos = name.lastIndexOf("." + extension);
-            result = name.substring(0, pos);
-        }
-        return result;
+        String nameFile = file.getName();
+        int dotPos = nameFile.lastIndexOf(".");
+        if ((dotPos == (-1)) | (dotPos == 0) | (dotPos == (nameFile.length() - 1))) return nameFile;
+        return nameFile.substring(0, dotPos);
     }
 
     //Метод возвращает расширение файла file. Если передана ссылка на каталог - возвращает null
