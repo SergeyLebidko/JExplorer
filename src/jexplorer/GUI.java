@@ -7,6 +7,7 @@ import jexplorer.fileexplorerclasses.SortOrders;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
+import jexplorer.guiclasses.tablepane.TableExplorerPane;
 import jexplorer.guiclasses.tilepane.TileExplorerPane;
 
 import javax.swing.*;
@@ -24,6 +25,9 @@ public class GUI {
     private FileSystemExplorer fileSystemExplorer;
 
     private ExplorerPane currentExplorerPane;
+
+    private ExplorerPane tileExplorer;
+    private ExplorerPane tableExplorer;
 
     private RootPointExplorerPane rootPointExplorerPane;
     private AdressPane adressPane;
@@ -94,10 +98,14 @@ public class GUI {
         contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         frm.setContentPane(contentPane);
 
+        //Создаем панели - табличную и плиточную. По-умолчанию программа стартует с плиточной панелью
+        tileExplorer = new TileExplorerPane();
+        tableExplorer = new TableExplorerPane();
+        currentExplorerPane = tileExplorer;
+
         //Создаем вспомогательную панель для отображения содержимого текущей папки
         JPanel fPane = new JPanel();
         fPane.setLayout(new BorderLayout());
-        currentExplorerPane = new TileExplorerPane();
         fPane.add(currentExplorerPane.getVisualComponent(), BorderLayout.CENTER);
 
         Box fUpPane = Box.createHorizontalBox();
@@ -224,12 +232,57 @@ public class GUI {
         mainMenu.add(viewMunu);
         mainMenu.add(helpMenu);
 
+        //Создаем слушателей, необходимых для переключения видов: табличного, плиточного с маленькими плитками и плиточного с большими плитками
+        ActionListener setBigTileView = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentExplorerPane instanceof TableExplorerPane) {
+                    fPane.remove(currentExplorerPane.getVisualComponent());
+                    currentExplorerPane = tileExplorer;
+                    fPane.add(currentExplorerPane.getVisualComponent(), BorderLayout.CENTER);
+                    fPane.revalidate();
+                    fPane.repaint();
+                }
+                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
+                tileExplorerPane.setBigCells();
+            }
+        };
+
+        ActionListener setSmallTileView = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentExplorerPane instanceof TableExplorerPane) {
+                    fPane.remove(currentExplorerPane.getVisualComponent());
+                    currentExplorerPane = tileExplorer;
+                    fPane.add(currentExplorerPane.getVisualComponent(), BorderLayout.CENTER);
+                    fPane.revalidate();
+                    fPane.repaint();
+                }
+                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
+                tileExplorerPane.setSmallCells();
+            }
+        };
+
+        ActionListener setTableView = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentExplorerPane instanceof TileExplorerPane) {
+                    fPane.remove(currentExplorerPane.getVisualComponent());
+                    currentExplorerPane = tableExplorer;
+                    fPane.add(currentExplorerPane.getVisualComponent(), BorderLayout.CENTER);
+                    fPane.revalidate();
+                    fPane.repaint();
+                    tableExplorer.refreshContent();
+                }
+            }
+        };
+
         //Добавляем элементам меню слушатели событий
         exitItem.addActionListener(exitListener);
 
-        bigTilesItem.addActionListener(bigTilesListener);
-        smallTilesItem.addActionListener(smallTilesListener);
-        //tableItem.addActionListener(???);
+        bigTilesItem.addActionListener(setBigTileView);
+        smallTilesItem.addActionListener(setSmallTileView);
+        tableItem.addActionListener(setTableView);
         showHiddenItem.addActionListener(hiddenListener);
 
         sortedByNameItem.addActionListener(setSortedType);
@@ -249,8 +302,10 @@ public class GUI {
 
         //Добавляем кнопкам слушатели событий
         refreshPanesBtn.addActionListener(refreshPanesListener);
-        bigTileViewBtn.addActionListener(bigTilesListener);
-        smallTileViewBtn.addActionListener(smallTilesListener);
+        bigTileViewBtn.addActionListener(setBigTileView);
+        smallTileViewBtn.addActionListener(setSmallTileView);
+        tableViewBtn.addActionListener(setTableView);
+
         showHiddenBtn.addActionListener(hiddenListener);
         upBtn.addActionListener(upListener);
 
@@ -284,28 +339,6 @@ public class GUI {
         }
     };
 
-    private ActionListener bigTilesListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (currentExplorerPane instanceof TileExplorerPane) {
-                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
-                tileExplorerPane.setBigCells();
-            }
-        }
-    };
-
-    private ActionListener smallTilesListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (currentExplorerPane instanceof TileExplorerPane) {
-                TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
-                tileExplorerPane.setSmallCells();
-            }
-        }
-    };
-
-    //Вставить код для включения табличного вида
-
     private ActionListener hiddenListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -328,7 +361,8 @@ public class GUI {
                 showHiddenBtn.setToolTipText("Сейчас скрытые элементы не отображаются");
             }
 
-            currentExplorerPane.setShowHiddenElements(show);
+            tileExplorer.setShowHiddenElements(show);
+            tableExplorer.setShowHiddenElements(show);
         }
     };
 
@@ -380,7 +414,7 @@ public class GUI {
             FileSorter fileSorter = MainClass.getFileSorter();
             SortOrders currentSortedOrder = fileSorter.getCurrentSortOrder();
             SortOrders choiceSortedOrder = SortOrders.valueOf(e.getActionCommand());
-            if (choiceSortedOrder!=currentSortedOrder){
+            if (choiceSortedOrder != currentSortedOrder) {
                 fileSorter.setSortOrder(choiceSortedOrder);
                 currentExplorerPane.refreshContent();
             }

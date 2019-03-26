@@ -188,22 +188,7 @@ public class TileExplorerPane implements ExplorerPane {
         }
         content = new JLabel[elements.length];
         int i = 0;
-
-        //Вначале добавляем каталоги
         for (File element : elements) {
-            if (!element.isDirectory()) continue;
-            if (element.isHidden() & !showHiddenElements) continue;
-            content[i] = new JLabel();
-            contentFileMap.put(content[i], element);
-            content[i].addMouseListener(ml);
-            setParameters(element, content[i]);
-            contentPane.add(content[i]);
-            i++;
-        }
-
-        //Затем добавляем файлы
-        for (File element : elements) {
-            if (!element.isFile()) continue;
             if (element.isHidden() & !showHiddenElements) continue;
             content[i] = new JLabel();
             contentFileMap.put(content[i], element);
