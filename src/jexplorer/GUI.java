@@ -246,6 +246,7 @@ public class GUI {
                     fPane.revalidate();
                     fPane.repaint();
                 }
+                bigTilesItem.setSelected(true);
                 TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
                 tileExplorerPane.setBigCells();
             }
@@ -260,6 +261,7 @@ public class GUI {
                     fPane.revalidate();
                     fPane.repaint();
                 }
+                smallTilesItem.setSelected(true);
                 TileExplorerPane tileExplorerPane = (TileExplorerPane) currentExplorerPane;
                 tileExplorerPane.setSmallCells();
             }
@@ -274,6 +276,7 @@ public class GUI {
                     fPane.revalidate();
                     fPane.repaint();
                     tableExplorer.refreshContent();
+                    tableItem.setSelected(true);
                 }
             }
         };
@@ -319,6 +322,7 @@ public class GUI {
         frm.setVisible(true);
     }
 
+    //Метод необходим для отображения сообщений об ошибках
     public void showErrorDialog(String msg) {
         JOptionPane.showMessageDialog(frm, msg, "Ошибка", JOptionPane.ERROR_MESSAGE);
     }

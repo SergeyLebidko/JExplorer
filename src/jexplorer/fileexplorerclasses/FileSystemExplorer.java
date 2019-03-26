@@ -23,9 +23,9 @@ public class FileSystemExplorer {
     //Метод метод переходит в каталог directory. Возвращает false, если это не удалось
     public void openDirectory(File directory) throws Exception {
         if (directory.isFile()) return;
-        if (!directory.exists() || !directory.canRead() || directory.listFiles()==null) {
-            String name=directory.getName();
-            if (name.equals(""))name=directory.getAbsolutePath();
+        if (!directory.exists() || !directory.canRead() || directory.listFiles() == null) {
+            String name = directory.getName();
+            if (name.equals("")) name = directory.getAbsolutePath();
             throw new Exception("Не получается открыть " + name);
         }
         currentDirectory = directory;
@@ -49,7 +49,7 @@ public class FileSystemExplorer {
             throw new Exception("Не могу прочитать содержимое папки " + currentDirectory.getName());
         }
 
-        FileSorter fileSorter= MainClass.getFileSorter();
+        FileSorter fileSorter = MainClass.getFileSorter();
         return fileSorter.sort(result);
     }
 
@@ -82,6 +82,21 @@ public class FileSystemExplorer {
         String pathToUserHome;
         pathToUserHome = System.getProperty("user.home");
         return new File(pathToUserHome);
+    }
+
+    //Метод возвращает имя файла (без расширения). Если передана ссылка на каталог - возвращает null
+    public String getFileName(File file) {
+        if (file.isDirectory()) return null;
+        String extension = getFileExtension(file);
+        String name = file.getName();
+        String result = "";
+        if (extension.equals("")) {
+            result = file.getName();
+        } else {
+            int pos = name.lastIndexOf("." + extension);
+            result = name.substring(0, pos);
+        }
+        return result;
     }
 
     //Метод возвращает расширение файла file. Если передана ссылка на каталог - возвращает null

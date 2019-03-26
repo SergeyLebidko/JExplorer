@@ -253,7 +253,7 @@ public class TileExplorerPane implements ExplorerPane {
             toolTipText+="Каталог: "+element.getName();
         }
 
-        DateFormat df=DateFormat.getDateInstance();
+        DateFormat df=DateFormat.getInstance();
         try {
             toolTipText+="<br>Дата создания: "+df.format(fileSystemExplorer.getDateCreated(element));
         } catch (Exception e) {

@@ -1,7 +1,7 @@
 package jexplorer.fileexplorerclasses;
 
 public enum FileTypes {
-    EXECUTABLE("exe", "Программа",0),
+    EXECUTABLE("exe", "Исполняемый файл",0),
     DOCUMENT("doc", "Документ",1),
     SPREADSHEET("table", "Таблица",2),
     PRESENTATION("presentation", "Презентация",3),
