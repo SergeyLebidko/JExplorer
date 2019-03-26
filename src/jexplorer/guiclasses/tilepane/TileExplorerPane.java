@@ -222,11 +222,15 @@ public class TileExplorerPane implements ExplorerPane {
     private void setTexts(File element, JLabel lab) {
         lab.setText(element.getName());
         String toolTipText="<html>";
-        toolTipText+=element.getName();
 
         NumberFormat nf=NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
         if (element.isFile()){
+            toolTipText+="Файл: "+element.getName();
+
+            String type=fileSystemExplorer.getFileType(element).getTooltipText();
+            toolTipText+=(type.equals("")?"":"<br>Тип: "+type);
+
             long size;
             String postFix="";
             size=element.length();
@@ -243,6 +247,10 @@ public class TileExplorerPane implements ExplorerPane {
                 postFix=nf.format((double)size/1073741824)+" Гб.";
             }
             toolTipText+="<br>Размер: "+postFix;
+        }
+
+        if (element.isDirectory()){
+            toolTipText+="Каталог: "+element.getName();
         }
 
         DateFormat df=DateFormat.getDateInstance();

@@ -1,17 +1,17 @@
 package jexplorer.fileexplorerclasses;
 
 public enum FileTypes {
-    EXECUTABLE("exe", 0),
-    DOCUMENT("doc", 1),
-    SPREADSHEET("table", 2),
-    PRESENTATION("presentation", 3),
-    ARCHIVE("arch", 4),
-    PDF("pdf", 5),
-    WEB("web", 6),
-    IMAGE("image", 7),
-    VIDEO("video", 8),
-    MUSIC("music", 9),
-    OTHER("other", 10);
+    EXECUTABLE("exe", "Программа",0),
+    DOCUMENT("doc", "Документ",1),
+    SPREADSHEET("table", "Таблица",2),
+    PRESENTATION("presentation", "Презентация",3),
+    ARCHIVE("arch", "Архив", 4),
+    PDF("pdf", "Документ PDF", 5),
+    WEB("web", "Файл HTML", 6),
+    IMAGE("image", "Изображение",7),
+    VIDEO("video", "Видео",8),
+    MUSIC("music","Аудио", 9),
+    OTHER("other", "",10);
 
     private String[][] extensions = {
             {"exe"},
@@ -28,15 +28,21 @@ public enum FileTypes {
     };
 
     private String name;
+    private String tooltipText;
     private int n;
 
-    FileTypes(String name, int n) {
+    FileTypes(String name, String tooltipText, int n) {
         this.name = name;
+        this.tooltipText = tooltipText;
         this.n = n;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getTooltipText(){
+        return  tooltipText;
     }
 
     public String[] getExtensionsSet() {

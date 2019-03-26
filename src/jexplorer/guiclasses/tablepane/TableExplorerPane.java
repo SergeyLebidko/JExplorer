@@ -18,9 +18,13 @@ public class TableExplorerPane implements ExplorerPane {
 
     public TableExplorerPane() {
         fileSystemExplorer=MainClass.getFileSystemExplorer();
+        UIManager.put("ScrollBar.width", 20);
 
         tableModel=new TableExplorerModel();
+
         contentTable=new JTable(tableModel);
+        contentTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
         scrollPane=new JScrollPane(contentTable);
 
         refreshContent();

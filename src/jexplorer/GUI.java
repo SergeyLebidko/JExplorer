@@ -72,7 +72,7 @@ public class GUI {
 
     public GUI() {
 
-        //Заменяем текущий LaF системным
+        //Заменяем текущий Look and Feel системным
         String laf = UIManager.getSystemLookAndFeelClassName();
         try {
             UIManager.setLookAndFeel(laf);
@@ -81,6 +81,7 @@ public class GUI {
             System.exit(0);
         }
 
+        //Получаем от MainClass объект для работы с файловой системой
         fileSystemExplorer = MainClass.getFileSystemExplorer();
 
         //Создаем главное окно
@@ -108,6 +109,7 @@ public class GUI {
         fPane.setLayout(new BorderLayout());
         fPane.add(currentExplorerPane.getVisualComponent(), BorderLayout.CENTER);
 
+        //Создаем панель с кнопками для изменения режима отображения скрытых файлов и переключения режима отображения файлов
         Box fUpPane = Box.createHorizontalBox();
         fUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         showHiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
@@ -136,6 +138,7 @@ public class GUI {
         rootPointExplorerPane = new RootPointExplorerPane();
         rPane.add(rootPointExplorerPane.getVisualComponent(), BorderLayout.CENTER);
 
+        //Создаем панель с кнопкой "Обновить"
         Box rUpPane = Box.createHorizontalBox();
         rUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         refreshPanesBtn = new JButton(new ImageIcon("res\\refresh.png"));
@@ -144,7 +147,7 @@ public class GUI {
         rUpPane.add(Box.createHorizontalGlue());
         rPane.add(rUpPane, BorderLayout.NORTH);
 
-        //Создаем панель, которая будет содаржать адресную строку и кнопку "вверх"
+        //Создаем панель, которая будет содаржать адресную строку и кнопку "Вверх"
         Box upPane = Box.createHorizontalBox();
         upBtn = new JButton(new ImageIcon("res\\up.png"));
         upBtn.setToolTipText("Вверх");
@@ -247,7 +250,6 @@ public class GUI {
                 tileExplorerPane.setBigCells();
             }
         };
-
         ActionListener setSmallTileView = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -262,7 +264,6 @@ public class GUI {
                 tileExplorerPane.setSmallCells();
             }
         };
-
         ActionListener setTableView = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -314,6 +315,7 @@ public class GUI {
         contentPane.add(fPane, BorderLayout.CENTER);
         contentPane.add(upPane, BorderLayout.NORTH);
 
+        //Выводим окно программы на экран
         frm.setVisible(true);
     }
 
@@ -321,6 +323,7 @@ public class GUI {
         JOptionPane.showMessageDialog(frm, msg, "Ошибка", JOptionPane.ERROR_MESSAGE);
     }
 
+    //Ниже идут геттеры, используемые элементами интерфейса для управления друг другом
     public ExplorerPane getCurrentExplorerPane() {
         return currentExplorerPane;
     }
