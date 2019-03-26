@@ -11,7 +11,9 @@ public enum FileTypes {
     IMAGE("image", "Изображение",7),
     VIDEO("video", "Видео",8),
     MUSIC("music","Аудио", 9),
-    OTHER("other", "",10);
+    DLL("dll", "Компонент приложения", 10),
+    INI("ini", "Файл настроек",11),
+    OTHER("other", "",12);
 
     private String[][] extensions = {
             {"exe"},
@@ -24,6 +26,8 @@ public enum FileTypes {
             {"jpg", "jpeg", "bmp", "png", "gif", "ico"},
             {"avi", "mkv", "mp4", "wmv", "mpeg", "mpg", "h264", "3gp"},
             {"mp3", "aac", "aac", "flac", "wav", "wave", "wma"},
+            {"dll"},
+            {"ini"},
             {}
     };
 
