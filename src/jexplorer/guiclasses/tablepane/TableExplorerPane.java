@@ -54,7 +54,7 @@ public class TableExplorerPane implements ExplorerPane {
         scrollPane = new JScrollPane(contentTable);
         scrollPane.getViewport().setBackground(backColor);
 
-        contentTable.addMouseListener(rowsClickListener);
+        contentTable.addMouseListener(tableClickListener);
         contentTable.getTableHeader().addMouseListener(columnHeaderClickListener);
 
         refreshContent();
@@ -95,7 +95,7 @@ public class TableExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
-    private MouseListener rowsClickListener = new MouseAdapter() {
+    private MouseListener tableClickListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1) {

@@ -5,7 +5,9 @@ import jexplorer.MainClass;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.LinkedList;
@@ -44,10 +46,23 @@ public class FileSystemExplorer {
     //Метод возвращает список элементов (файлов и папок) текущего каталога
     public File[] getCurrentDirectoryElementsList() throws Exception {
         File[] result;
-        result = currentDirectory.listFiles();
-        if (result == null) {
+//        result = currentDirectory.listFiles();
+//        if (result == null) {
+//            throw new Exception("Не могу прочитать содержимое папки " + currentDirectory.getName());
+//        }
+
+        LinkedList<File> directroryContent = new LinkedList<>();
+
+        try (DirectoryStream<Path> directoryStream=Files.newDirectoryStream(currentDirectory.toPath())) {
+            for (Path element: directoryStream){
+                directroryContent.add(element.toFile());
+            }
+        }catch (Exception ex){
             throw new Exception("Не могу прочитать содержимое папки " + currentDirectory.getName());
         }
+
+        result=new File[directroryContent.size()];
+        directroryContent.toArray(result);
 
         FileSorter fileSorter = MainClass.getFileSorter();
         return fileSorter.sort(result);

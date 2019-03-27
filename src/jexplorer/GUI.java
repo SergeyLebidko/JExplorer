@@ -301,7 +301,7 @@ public class GUI {
 
         aboutItem.addActionListener(aboutListener);
 
-        //Добавляем меню в главное окно
+        //Добавляем главное меню в окно
         frm.setJMenuBar(mainMenu);
 
         //Добавляем кнопкам слушатели событий
