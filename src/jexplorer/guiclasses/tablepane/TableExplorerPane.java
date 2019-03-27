@@ -34,6 +34,7 @@ public class TableExplorerPane implements ExplorerPane {
 
         contentTable = new JTable(tableModel);
         contentTable.setDefaultRenderer(File.class, new TableExplorerCellRenderer());
+        contentTable.getTableHeader().setDefaultRenderer(new TableExplorerHeaderRenderer());
         contentTable.setRowHeight(34);
         contentTable.setShowVerticalLines(false);
         contentTable.setShowHorizontalLines(false);

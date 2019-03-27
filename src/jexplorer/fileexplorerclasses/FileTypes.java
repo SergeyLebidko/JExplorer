@@ -24,7 +24,7 @@ public enum FileTypes {
             {"pdf"},
             {"htm", "html"},
             {"jpg", "jpeg", "bmp", "png", "gif", "ico"},
-            {"avi", "mkv", "mp4", "wmv", "mpeg", "mpg", "h264", "3gp"},
+            {"avi", "mkv", "mp4", "wmv", "mpeg", "mpg", "h264", "3gp", "flv"},
             {"mp3", "aac", "aac", "flac", "wav", "wave", "wma"},
             {"dll"},
             {"ini"},

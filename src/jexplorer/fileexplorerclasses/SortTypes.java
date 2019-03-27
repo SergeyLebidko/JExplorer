@@ -1,6 +1,6 @@
 package jexplorer.fileexplorerclasses;
 
-public enum SortMethods {
+public enum SortTypes {
 
     BY_NAME("BY_NAME"),
     BY_SIZE("BY_SIZE"),
@@ -11,7 +11,7 @@ public enum SortMethods {
 
     private String name;
 
-    SortMethods(String name) {
+    SortTypes(String name) {
         this.name=name;
     }
 

@@ -2,7 +2,7 @@ package jexplorer;
 
 import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
-import jexplorer.fileexplorerclasses.SortMethods;
+import jexplorer.fileexplorerclasses.SortTypes;
 import jexplorer.fileexplorerclasses.SortOrders;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
@@ -166,17 +166,17 @@ public class GUI {
 
         sortedMenu = new JMenu("Сортировка");
         sortedByNameItem = new JRadioButtonMenuItem("По имени", true);
-        sortedByNameItem.setActionCommand(SortMethods.BY_NAME.getName());
+        sortedByNameItem.setActionCommand(SortTypes.BY_NAME.getName());
         sortedBySizeItem = new JRadioButtonMenuItem("По размеру");
-        sortedBySizeItem.setActionCommand(SortMethods.BY_SIZE.getName());
+        sortedBySizeItem.setActionCommand(SortTypes.BY_SIZE.getName());
         sortedByTypeItem = new JRadioButtonMenuItem("По типу");
-        sortedByTypeItem.setActionCommand(SortMethods.BY_TYPE.getName());
+        sortedByTypeItem.setActionCommand(SortTypes.BY_TYPE.getName());
         sortedByExtensionItem = new JRadioButtonMenuItem("По расширению");
-        sortedByExtensionItem.setActionCommand(SortMethods.BY_EXTENSION.getName());
+        sortedByExtensionItem.setActionCommand(SortTypes.BY_EXTENSION.getName());
         sortedByDateCreatedItem = new JRadioButtonMenuItem("По дате создания");
-        sortedByDateCreatedItem.setActionCommand(SortMethods.BY_DATE_CREATED.getName());
+        sortedByDateCreatedItem.setActionCommand(SortTypes.BY_DATE_CREATED.getName());
         sortedByDateModifiedItem = new JRadioButtonMenuItem("По дате изменения");
-        sortedByDateModifiedItem.setActionCommand(SortMethods.BY_DATE_MODIFIED.getName());
+        sortedByDateModifiedItem.setActionCommand(SortTypes.BY_DATE_MODIFIED.getName());
 
         sortedGroup = new ButtonGroup();
         sortedGroup.add(sortedByNameItem);
@@ -336,6 +336,49 @@ public class GUI {
         return adressPane;
     }
 
+    //Метод ниже нужен для обновления состояния пунктов меню "Сортировка".
+    //Он необходим для корректного отображения выбранных параметров сортировки при изменении их не через меню
+    public void refreshSortMenu(){
+        SortTypes sortType = MainClass.getFileSorter().getCurrentSortType();
+        SortOrders sortOrder = MainClass.getFileSorter().getCurrentSortOrder();
+
+        switch (sortType){
+            case BY_NAME:{
+                sortedByNameItem.setSelected(true);
+                break;
+            }
+            case BY_SIZE:{
+                sortedBySizeItem.setSelected(true);
+                break;
+            }
+            case BY_TYPE:{
+                sortedByTypeItem.setSelected(true);
+                break;
+            }
+            case BY_EXTENSION:{
+                sortedByExtensionItem.setSelected(true);
+                break;
+            }
+            case BY_DATE_CREATED:{
+                sortedByDateCreatedItem.setSelected(true);
+                break;
+            }
+            case BY_DATE_MODIFIED:{
+                sortedByDateModifiedItem.setSelected(true);
+            }
+        }
+
+        switch (sortOrder){
+            case TO_UP:{
+                orderToUpItem.setSelected(true);
+                break;
+            }
+            case TO_DOWN:{
+                orderToDownItem.setSelected(true);
+            }
+        }
+    }
+
     //Ниже идет группа анонимных классов - обработчиков событий
     private ActionListener refreshPanesListener = new ActionListener() {
         @Override
@@ -406,8 +449,8 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             FileSorter fileSorter = MainClass.getFileSorter();
-            SortMethods currentSortedType = fileSorter.getCurrentSortType();
-            SortMethods choiceSortedType = SortMethods.valueOf(e.getActionCommand());
+            SortTypes currentSortedType = fileSorter.getCurrentSortType();
+            SortTypes choiceSortedType = SortTypes.valueOf(e.getActionCommand());
             if (choiceSortedType != currentSortedType) {
                 fileSorter.setSortType(choiceSortedType);
                 currentExplorerPane.refreshContent();

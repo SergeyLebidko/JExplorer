@@ -7,7 +7,7 @@ import java.util.*;
 
 public class FileSorter {
 
-    private SortMethods currentSortType;    //Текущий тип сортировки
+    private SortTypes currentSortType;    //Текущий тип сортировки
     private SortOrders currentSortOrder;      //Текущий порядок сортировки (по возрастанию/убыванию)
 
     //Компаратор для сортировки файлов по имени
@@ -125,11 +125,11 @@ public class FileSorter {
     private ByDateModified byDateModifiedComparator = new ByDateModified();
 
     public FileSorter() {
-        currentSortType = SortMethods.BY_NAME;
+        currentSortType = SortTypes.BY_NAME;
         currentSortOrder = SortOrders.TO_UP;
     }
 
-    public void setSortType(SortMethods type) {
+    public void setSortType(SortTypes type) {
         currentSortType = type;
     }
 
@@ -137,7 +137,7 @@ public class FileSorter {
         currentSortOrder = order;
     }
 
-    public SortMethods getCurrentSortType() {
+    public SortTypes getCurrentSortType() {
         return currentSortType;
     }
 
