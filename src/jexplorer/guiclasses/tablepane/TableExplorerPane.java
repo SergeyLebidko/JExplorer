@@ -2,7 +2,10 @@ package jexplorer.guiclasses.tablepane;
 
 import jexplorer.GUI;
 import jexplorer.MainClass;
+import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
+import jexplorer.fileexplorerclasses.SortOrders;
+import jexplorer.fileexplorerclasses.SortTypes;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 
@@ -41,7 +44,6 @@ public class TableExplorerPane implements ExplorerPane {
         contentTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         TableColumnModel columnModel = contentTable.getColumnModel();
-        columnModel.setColumnSelectionAllowed(false);
         columnModel.getColumn(0).setPreferredWidth(400);
         columnModel.getColumn(1).setPreferredWidth(150);
         columnModel.getColumn(2).setPreferredWidth(100);
@@ -52,7 +54,8 @@ public class TableExplorerPane implements ExplorerPane {
         scrollPane = new JScrollPane(contentTable);
         scrollPane.getViewport().setBackground(backColor);
 
-        contentTable.addMouseListener(mouseListener);
+        contentTable.addMouseListener(rowsClickListener);
+        contentTable.getTableHeader().addMouseListener(columnHeaderClickListener);
 
         refreshContent();
     }
@@ -92,14 +95,14 @@ public class TableExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
-    private MouseListener mouseListener=new MouseAdapter() {
+    private MouseListener rowsClickListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1){
-                File file=(File)tableModel.getValueAt(contentTable.getSelectedRow(),0);
+            if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1) {
+                File file = (File) tableModel.getValueAt(contentTable.getSelectedRow(), 0);
                 GUI gui = MainClass.getGui();
-                if (!file.exists()){
-                    gui.showErrorDialog("Не получается открыть "+file.getName());
+                if (!file.exists()) {
+                    gui.showErrorDialog("Не получается открыть " + file.getName());
                     return;
                 }
                 if (file.isFile()) {
@@ -121,6 +124,60 @@ public class TableExplorerPane implements ExplorerPane {
                     adressPane.refreshContent();
                     refreshContent();
                 }
+            }
+        }
+    };
+
+    private MouseListener columnHeaderClickListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON1) {
+                int columnNumber = contentTable.getTableHeader().columnAtPoint(e.getPoint());
+                String columnName = contentTable.getColumnModel().getColumn(columnNumber).getHeaderValue().toString();
+
+                FileSorter fileSorter = MainClass.getFileSorter();
+                SortTypes selectedSortType = null;
+                SortOrders selectedSortOrder = fileSorter.getCurrentSortOrder();
+
+                switch (columnName) {
+                    case "Имя": {
+                        selectedSortType = SortTypes.BY_NAME;
+                        break;
+                    }
+                    case "Размер": {
+                        selectedSortType = SortTypes.BY_SIZE;
+                        break;
+                    }
+                    case "Тип": {
+                        selectedSortType = SortTypes.BY_TYPE;
+                        break;
+                    }
+                    case "Расширение": {
+                        selectedSortType = SortTypes.BY_EXTENSION;
+                        break;
+                    }
+                    case "Дата создания": {
+                        selectedSortType = SortTypes.BY_DATE_CREATED;
+                        break;
+                    }
+                    case "Дата изменения": {
+                        selectedSortType = SortTypes.BY_DATE_MODIFIED;
+                    }
+                }
+
+                if (fileSorter.getCurrentSortType() == selectedSortType) {
+                    if (fileSorter.getCurrentSortOrder() == SortOrders.TO_UP) selectedSortOrder = SortOrders.TO_DOWN;
+                    if (fileSorter.getCurrentSortOrder() == SortOrders.TO_DOWN) selectedSortOrder = SortOrders.TO_UP;
+                }
+
+                fileSorter.setSortOrder(selectedSortOrder);
+                fileSorter.setSortType(selectedSortType);
+
+                GUI gui=MainClass.getGui();
+                gui.refreshSortMenu();
+
+                contentTable.getTableHeader().repaint();
+                refreshContent();
             }
         }
     };
