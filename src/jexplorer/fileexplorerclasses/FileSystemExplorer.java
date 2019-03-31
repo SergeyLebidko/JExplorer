@@ -46,11 +46,6 @@ public class FileSystemExplorer {
     //Метод возвращает список элементов (файлов и папок) текущего каталога
     public File[] getCurrentDirectoryElementsList() throws Exception {
         File[] result;
-//        result = currentDirectory.listFiles();
-//        if (result == null) {
-//            throw new Exception("Не могу прочитать содержимое папки " + currentDirectory.getName());
-//        }
-
         LinkedList<File> directroryContent = new LinkedList<>();
 
         try (DirectoryStream<Path> directoryStream=Files.newDirectoryStream(currentDirectory.toPath())) {
