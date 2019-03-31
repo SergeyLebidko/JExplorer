@@ -161,7 +161,6 @@ public class TileExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
-    //Метод, управляющий отображением скрытых элементов
     public void setShowHiddenElements(boolean show) {
         if (show == showHiddenElements) return;
         showHiddenElements = show;
@@ -208,6 +207,12 @@ public class TileExplorerPane implements ExplorerPane {
         for (Component component : components) {
             contentPane.remove(component);
         }
+    }
+
+    public File[] getSelectedElements(){
+        File[] result;
+        result = new File[0];    //Код-заглушка, который должен быть удален
+        return result;
     }
 
     //Ниже идет группа методов, необходимых для установки параметров значков

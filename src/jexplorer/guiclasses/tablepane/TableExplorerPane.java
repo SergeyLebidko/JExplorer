@@ -60,12 +60,16 @@ public class TableExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
-    @Override
+    public void setShowHiddenElements(boolean show) {
+        if (show == showHiddenElements) return;
+        showHiddenElements = show;
+        refreshContent();
+    }
+
     public Component getVisualComponent() {
         return scrollPane;
     }
 
-    @Override
     public void refreshContent() {
         //Получаем список объектов в текущем каталоге
         File[] elements;
@@ -88,11 +92,14 @@ public class TableExplorerPane implements ExplorerPane {
         tableModel.refreshContent(content.toArray(new File[content.size()]));
     }
 
-    @Override
-    public void setShowHiddenElements(boolean show) {
-        if (show == showHiddenElements) return;
-        showHiddenElements = show;
-        refreshContent();
+    public File[] getSelectedElements(){
+        File[] result;
+        int[] selectedRows = contentTable.getSelectedRows();
+        result=new File[selectedRows.length];
+        for (int i=0;i<selectedRows.length;i++){
+            result[i]=(File) tableModel.getValueAt(selectedRows[i],0);
+        }
+        return result;
     }
 
     private MouseListener tableClickListener = new MouseAdapter() {
