@@ -102,6 +102,7 @@ public class TableExplorerPane implements ExplorerPane {
         return result;
     }
 
+    //Обраточик кликов по строкам таблицы
     private MouseListener tableClickListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -135,6 +136,7 @@ public class TableExplorerPane implements ExplorerPane {
         }
     };
 
+    //Обработчик кликов по заголовкам столбцов
     private MouseListener columnHeaderClickListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
