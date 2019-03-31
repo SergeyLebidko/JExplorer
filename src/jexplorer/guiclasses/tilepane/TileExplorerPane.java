@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class TileExplorerPane implements ExplorerPane {
     private JLabel[] content;
     private AdaptiveGridLayout currentLayout;
     private FileSystemExplorer fileSystemExplorer;
+    private Selector selector;
 
     //Контейнер, сопоставляющий значки на панели и пути к соответствующим элементам в файловой системе
     private HashMap<JLabel, File> contentFileMap;
@@ -144,6 +146,7 @@ public class TileExplorerPane implements ExplorerPane {
             }
         });
 
+        selector = new Selector();
         contentFileMap = new HashMap<>();
         showHiddenElements = false;
         refreshContent();
@@ -177,6 +180,7 @@ public class TileExplorerPane implements ExplorerPane {
         contentFileMap.clear();
 
         //Добавляем на панель контента новые элементы
+        //Для этого сперва получаем список элементов (файлов и каталогов) текущего каталога
         File[] elements;
         try {
             elements = fileSystemExplorer.getCurrentDirectoryElementsList();
@@ -185,7 +189,19 @@ public class TileExplorerPane implements ExplorerPane {
             gui.showErrorDialog(e.getMessage());
             return;
         }
-        content = new JLabel[elements.length];
+
+        //Затем в зависимости от опции отображения скрытых элементов создаем новый массив меток для отображения элементов
+        if (showHiddenElements){
+            content = new JLabel[elements.length];
+        }else {
+            int countNoHiddens=0;
+            for (File element: elements){
+                if (!element.isHidden())countNoHiddens++;
+            }
+            content = new JLabel[countNoHiddens];
+        }
+
+        //Создаем метки соответствующие файлам и папкам
         int i = 0;
         for (File element : elements) {
             if (element.isHidden() & !showHiddenElements) continue;
@@ -197,6 +213,10 @@ public class TileExplorerPane implements ExplorerPane {
             i++;
         }
 
+        //Передаем элементы текущего каталога в селектор для поддержки выделения элементов
+        selector.setContent(content, contentFileMap);
+
+        //Перерисовываем панель контента
         contentPane.revalidate();
         contentPane.repaint();
     }
@@ -219,7 +239,7 @@ public class TileExplorerPane implements ExplorerPane {
     private void setParameters(File element, JLabel lab) {
         setTexts(element, lab);
         setIcon(element, lab);
-        setTextColors(element, lab);
+        setColors(element, lab);
         setBorders(lab);
         setAligments(lab);
     }
@@ -287,7 +307,9 @@ public class TileExplorerPane implements ExplorerPane {
         lab.setIcon(new ImageIcon(path));
     }
 
-    private void setTextColors(File element, JLabel lab) {
+    private void setColors(File element, JLabel lab) {
+        lab.setOpaque(true);
+        lab.setBackground(backColor);
         if (element.isHidden()) {
             lab.setForeground(textColorForHidden);
         }
@@ -310,7 +332,17 @@ public class TileExplorerPane implements ExplorerPane {
     private MouseListener ml = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1) {
+            //Обрабатываем один щелчек левой кнопкой мыши
+            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON1){
+                JLabel lab = (JLabel) e.getSource();
+                if (e.getModifiersEx()==0)selector.simpleSelect(lab);    //Если на клавиатуре не нажато никаких дополнительных клавиш
+                if (e.getModifiersEx()==128)selector.ctrlSelect(lab);    //Если на клавиатуре нажата клавиша Shift
+                if (e.getModifiersEx()==64)selector.shiftSelect(lab);    //Если на клавиатуре нажата клавиша Ctrl
+                return;
+            }
+
+            //Обрабатываем двойной щелчек левой кнопкой мышки
+            if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1 & e.getModifiersEx()==0) {
                 JLabel lab = (JLabel) e.getSource();
                 File file = contentFileMap.get(lab);
                 GUI gui = MainClass.getGui();
