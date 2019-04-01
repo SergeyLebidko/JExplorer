@@ -33,16 +33,31 @@ public class GUI {
     private AdressPane adressPane;
 
     private JButton refreshPanesBtn;
+    private JButton upBtn;
     private JButton bigTileViewBtn;
     private JButton smallTileViewBtn;
     private JButton tableViewBtn;
     private JToggleButton showHiddenBtn;
     private String commandToShowHiddenBtn = "btn_element";
-
-    private JButton upBtn;
+    private JButton createFolderBtn;
+    private JButton copyBtn;
+    private JButton cutBtn;
+    private JButton pasteBtn;
+    private JButton renameBtn;
+    private JButton deleteBtn;
+    private JButton propertiesBtn;
 
     private JMenu fileMenu;
+    private JMenuItem createFolderItem;
+    private JMenuItem deleteItem;
+    private JMenuItem propertiesItem;
     private JMenuItem exitItem;
+
+    private JMenu editMenu;
+    private JMenuItem renameItem;
+    private JMenuItem copyItem;
+    private JMenuItem cutItem;
+    private JMenuItem pasteItem;
 
     private JMenu sortedMenu;
     private JRadioButtonMenuItem sortedByNameItem;
@@ -88,6 +103,7 @@ public class GUI {
         frm = new JFrame("JExplorer");
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frm.setSize(WIDTH_FRM, HEIGHT_FRM);
+        frm.setMinimumSize(new Dimension(WIDTH_FRM / 2, HEIGHT_FRM / 2));
         frm.setIconImage(new ImageIcon("res\\logo.png").getImage());
         int xPos = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - WIDTH_FRM / 2;
         int yPos = Toolkit.getDefaultToolkit().getScreenSize().height / 2 - HEIGHT_FRM / 2;
@@ -109,9 +125,48 @@ public class GUI {
         fPane.setLayout(new BorderLayout());
         fPane.add(currentExplorerPane.getVisualComponent(), BorderLayout.CENTER);
 
-        //Создаем панель с кнопками для изменения режима отображения скрытых файлов и переключения режима отображения файлов
-        Box fUpPane = Box.createHorizontalBox();
-        fUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        //Создаем вспомогательную панель для отображения списка корневых точек
+        JPanel rPane = new JPanel();
+        rPane.setLayout(new BorderLayout());
+        rPane.setPreferredSize(new Dimension(WIDTH_FRM / 6, (int) (HEIGHT_FRM * 0.9)));
+        rootPointExplorerPane = new RootPointExplorerPane();
+        rPane.add(rootPointExplorerPane.getVisualComponent(), BorderLayout.CENTER);
+
+        //Создаем панель, которая будет содаржать панель инструментов, адресную строку, кнопки "Вверх" и "Обновить"
+        JPanel upPane = new JPanel();
+
+        //Создаем кнопки "Вверх" и "Обновить" и адресную строку
+        upPane.setLayout(new BorderLayout());
+        Box adressPane = Box.createHorizontalBox();
+        upBtn = new JButton(new ImageIcon("res\\up.png"));
+        upBtn.setToolTipText("Вверх");
+        refreshPanesBtn = new JButton(new ImageIcon("res\\refresh.png"));
+        refreshPanesBtn.setToolTipText("Обновить");
+        this.adressPane = new AdressPane();
+        adressPane.add(upBtn);
+        adressPane.add(Box.createHorizontalStrut(5));
+        adressPane.add(refreshPanesBtn);
+        adressPane.add(Box.createHorizontalStrut(5));
+        adressPane.add(this.adressPane.getVisualComponent());
+        upPane.add(adressPane, BorderLayout.SOUTH);
+
+        //Создаем панель инструментов
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        createFolderBtn = new JButton(new ImageIcon("res\\new_folder.png"));
+        createFolderBtn.setToolTipText("Создать каталог");
+        copyBtn=new JButton(new ImageIcon("res\\copy.png"));
+        copyBtn.setToolTipText("Копировать");
+        cutBtn=new JButton(new ImageIcon("res\\cut.png"));
+        cutBtn.setToolTipText("Вырезать");
+        pasteBtn=new JButton(new ImageIcon("res\\paste.png"));
+        pasteBtn.setToolTipText("Вставить");
+        renameBtn=new JButton(new ImageIcon("res\\rename.png"));
+        renameBtn.setToolTipText("Переименовать");
+        deleteBtn=new JButton(new ImageIcon("res\\delete.png"));
+        deleteBtn.setToolTipText("Удалить");
+        propertiesBtn=new JButton(new ImageIcon("res\\properties.png"));
+        propertiesBtn.setToolTipText("Свойства");
         showHiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
         showHiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
         showHiddenBtn.setToolTipText("Сейчас скрытые элементы не отображаются");
@@ -122,47 +177,57 @@ public class GUI {
         smallTileViewBtn.setToolTipText("Мелкие значки");
         tableViewBtn = new JButton(new ImageIcon("res\\table.png"));
         tableViewBtn.setToolTipText("Таблица");
-        fUpPane.add(showHiddenBtn);
-        fUpPane.add(Box.createHorizontalGlue());
-        fUpPane.add(tableViewBtn);
-        fUpPane.add(Box.createHorizontalStrut(5));
-        fUpPane.add(smallTileViewBtn);
-        fUpPane.add(Box.createHorizontalStrut(5));
-        fUpPane.add(bigTileViewBtn);
-        fPane.add(fUpPane, BorderLayout.NORTH);
-
-        //Создаем вспомогательную панель для отображения списка корневых точек
-        JPanel rPane = new JPanel();
-        rPane.setLayout(new BorderLayout());
-        rPane.setPreferredSize(new Dimension(WIDTH_FRM / 6, (int) (HEIGHT_FRM * 0.9)));
-        rootPointExplorerPane = new RootPointExplorerPane();
-        rPane.add(rootPointExplorerPane.getVisualComponent(), BorderLayout.CENTER);
-
-        //Создаем панель с кнопкой "Обновить"
-        Box rUpPane = Box.createHorizontalBox();
-        rUpPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-        refreshPanesBtn = new JButton(new ImageIcon("res\\refresh.png"));
-        refreshPanesBtn.setToolTipText("Обновить");
-        rUpPane.add(refreshPanesBtn);
-        rUpPane.add(Box.createHorizontalGlue());
-        rPane.add(rUpPane, BorderLayout.NORTH);
-
-        //Создаем панель, которая будет содаржать адресную строку и кнопку "Вверх"
-        Box upPane = Box.createHorizontalBox();
-        upBtn = new JButton(new ImageIcon("res\\up.png"));
-        upBtn.setToolTipText("Вверх");
-        adressPane = new AdressPane();
-        upPane.add(upBtn);
-        upPane.add(Box.createHorizontalStrut(5));
-        upPane.add(adressPane.getVisualComponent());
+        toolBar.add(createFolderBtn);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.addSeparator();
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(copyBtn);
+        toolBar.add(cutBtn);
+        toolBar.add(pasteBtn);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.addSeparator();
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(renameBtn);
+        toolBar.add(deleteBtn);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.addSeparator();
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(propertiesBtn);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(showHiddenBtn);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.addSeparator();
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(tableViewBtn);
+        toolBar.add(smallTileViewBtn);
+        toolBar.add(bigTileViewBtn);
+        upPane.add(toolBar, BorderLayout.NORTH);
 
         //Создаем главное меню и его элементы
         JMenuBar mainMenu = new JMenuBar();
-        mainMenu.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         fileMenu = new JMenu("Файл");
+        createFolderItem = new JMenuItem("Создать папку");
+        deleteItem=new JMenuItem("Удалить");
+        propertiesItem=new JMenuItem("Свойства");
         exitItem = new JMenuItem("Выход");
+        fileMenu.add(createFolderItem);
+        fileMenu.add(deleteItem);
+        fileMenu.addSeparator();
+        fileMenu.add(propertiesItem);
+        fileMenu.addSeparator();
         fileMenu.add(exitItem);
+
+        editMenu=new JMenu("Правка");
+        copyItem=new JMenuItem("Копировать");
+        cutItem=new JMenuItem("Вырезать");
+        pasteItem=new JMenuItem("Вставить");
+        renameItem=new JMenuItem("Переименовать");
+        editMenu.add(copyItem);
+        editMenu.add(cutItem);
+        editMenu.add(pasteItem);
+        editMenu.addSeparator();
+        editMenu.add(renameItem);
 
         sortedMenu = new JMenu("Сортировка");
         sortedByNameItem = new JRadioButtonMenuItem("По имени", true);
@@ -231,6 +296,7 @@ public class GUI {
 
         //Добавляем созданные элементы в главное меню
         mainMenu.add(fileMenu);
+        mainMenu.add(editMenu);
         mainMenu.add(sortedMenu);
         mainMenu.add(viewMunu);
         mainMenu.add(helpMenu);
@@ -309,7 +375,6 @@ public class GUI {
         bigTileViewBtn.addActionListener(setBigTileView);
         smallTileViewBtn.addActionListener(setSmallTileView);
         tableViewBtn.addActionListener(setTableView);
-
         showHiddenBtn.addActionListener(hiddenListener);
         upBtn.addActionListener(upListener);
 
@@ -338,42 +403,42 @@ public class GUI {
 
     //Метод ниже нужен для обновления состояния пунктов меню "Сортировка".
     //Он необходим для корректного отображения выбранных параметров сортировки при изменении их не через меню
-    public void refreshSortMenu(){
+    public void refreshSortMenu() {
         SortTypes sortType = MainClass.getFileSorter().getCurrentSortType();
         SortOrders sortOrder = MainClass.getFileSorter().getCurrentSortOrder();
 
-        switch (sortType){
-            case BY_NAME:{
+        switch (sortType) {
+            case BY_NAME: {
                 sortedByNameItem.setSelected(true);
                 break;
             }
-            case BY_SIZE:{
+            case BY_SIZE: {
                 sortedBySizeItem.setSelected(true);
                 break;
             }
-            case BY_TYPE:{
+            case BY_TYPE: {
                 sortedByTypeItem.setSelected(true);
                 break;
             }
-            case BY_EXTENSION:{
+            case BY_EXTENSION: {
                 sortedByExtensionItem.setSelected(true);
                 break;
             }
-            case BY_DATE_CREATED:{
+            case BY_DATE_CREATED: {
                 sortedByDateCreatedItem.setSelected(true);
                 break;
             }
-            case BY_DATE_MODIFIED:{
+            case BY_DATE_MODIFIED: {
                 sortedByDateModifiedItem.setSelected(true);
             }
         }
 
-        switch (sortOrder){
-            case TO_UP:{
+        switch (sortOrder) {
+            case TO_UP: {
                 orderToUpItem.setSelected(true);
                 break;
             }
-            case TO_DOWN:{
+            case TO_DOWN: {
                 orderToDownItem.setSelected(true);
             }
         }
@@ -440,7 +505,7 @@ public class GUI {
     private ActionListener aboutListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String msg = "<html>Простой файловый менеджер на Java<br>Автор: Сергей Лебидко. 2019 г.<br><br>Набор иконок для приложения взят с сайта icon-icons.com";
+            String msg = "<html>JExplorer. Простой файловый менеджер на Java<br>Автор: Сергей Лебидко. 2019 г.<br><br>Набор иконок для приложения взят с сайта icon-icons.com";
             JOptionPane.showMessageDialog(frm, msg, "О программе", JOptionPane.PLAIN_MESSAGE);
         }
     };
