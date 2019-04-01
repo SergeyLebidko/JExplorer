@@ -89,6 +89,13 @@ public class GUI {
     private JMenuItem aboutItem;
 
     private JPopupMenu popupMenu;
+    private JMenuItem selectAllPopupItem;
+    private JMenuItem copyPopupItem;
+    private JMenuItem cutPopupItem;
+    private JMenuItem pastePopupItem;
+    private JMenuItem renamePopupItem;
+    private JMenuItem deletePopupItem;
+    private JMenuItem propertiesPopupItem;
 
     public GUI() {
 
@@ -311,17 +318,33 @@ public class GUI {
         helpMenu.add(aboutItem);
 
         //Создаем всплывающе меню
-        popupMenu=new JPopupMenu();
-        popupMenu.add(selectAllItem);
+        popupMenu = new JPopupMenu();
+        selectAllPopupItem = new JMenuItem("Выделить все");
+        copyPopupItem = new JMenuItem("Копировать");
+        cutPopupItem = new JMenuItem("Вырезать");
+        pastePopupItem = new JMenuItem("Вставить");
+        renamePopupItem = new JMenuItem("Переименовать");
+        deletePopupItem = new JMenuItem("Удалить");
+        propertiesPopupItem = new JMenuItem("Свойства");
+        popupMenu.add(selectAllPopupItem);
         popupMenu.addSeparator();
-        popupMenu.add(copyItem);
-        popupMenu.add(cutItem);
-        popupMenu.add(pasteItem);
+        popupMenu.add(copyPopupItem);
+        popupMenu.add(cutPopupItem);
+        popupMenu.add(pastePopupItem);
         popupMenu.addSeparator();
-        popupMenu.add(renameItem);
-        popupMenu.add(deleteItem);
+        popupMenu.add(renamePopupItem);
+        popupMenu.add(deletePopupItem);
         popupMenu.addSeparator();
-        popupMenu.add(propertiesItem);
+        popupMenu.add(propertiesPopupItem);
+
+        //Добавяляем элементам всплывающего меню слушатели событий
+        selectAllPopupItem.addActionListener(selectAllListener);
+        copyPopupItem.addActionListener(copyListener);
+        cutPopupItem.addActionListener(cutListener);
+        pastePopupItem.addActionListener(pasteListener);
+        renamePopupItem.addActionListener(renameListener);
+        deletePopupItem.addActionListener(deleteListener);
+        propertiesPopupItem.addActionListener(propertiesListener);
 
         //Передаем созданное всплывающее меню файловым панелям
         tableExplorer.setPopupMenu(popupMenu);
