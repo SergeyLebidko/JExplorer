@@ -92,14 +92,19 @@ public class TableExplorerPane implements ExplorerPane {
         tableModel.refreshContent(content.toArray(new File[content.size()]));
     }
 
-    public File[] getSelectedElements(){
+    public File[] getSelectedElements() {
         File[] result;
         int[] selectedRows = contentTable.getSelectedRows();
-        result=new File[selectedRows.length];
-        for (int i=0;i<selectedRows.length;i++){
-            result[i]=(File) tableModel.getValueAt(selectedRows[i],0);
+        result = new File[selectedRows.length];
+        for (int i = 0; i < selectedRows.length; i++) {
+            result[i] = (File) tableModel.getValueAt(selectedRows[i], 0);
         }
         return result;
+    }
+
+    public void selectAllElements() {
+        int rowCount = contentTable.getRowCount();
+        contentTable.getSelectionModel().setSelectionInterval(0, rowCount - 1);
     }
 
     //Обраточик кликов по строкам таблицы
@@ -182,7 +187,7 @@ public class TableExplorerPane implements ExplorerPane {
                 fileSorter.setSortOrder(selectedSortOrder);
                 fileSorter.setSortType(selectedSortType);
 
-                GUI gui=MainClass.getGui();
+                GUI gui = MainClass.getGui();
                 gui.refreshSortMenu();
 
                 contentTable.getTableHeader().repaint();

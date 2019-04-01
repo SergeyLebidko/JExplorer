@@ -235,6 +235,10 @@ public class TileExplorerPane implements ExplorerPane {
         return result;
     }
 
+    public void selectAllElements(){
+        selector.selectAll();
+    }
+
     //Ниже идет группа методов, необходимых для установки параметров значков
     private void setParameters(File element, JLabel lab) {
         setTexts(element, lab);

@@ -40,6 +40,7 @@ public class GUI {
     private JToggleButton showHiddenBtn;
     private String commandToShowHiddenBtn = "btn_element";
     private JButton createFolderBtn;
+    private JButton selectAllBtn;
     private JButton copyBtn;
     private JButton cutBtn;
     private JButton pasteBtn;
@@ -54,6 +55,7 @@ public class GUI {
     private JMenuItem exitItem;
 
     private JMenu editMenu;
+    private JMenuItem selectAllItem;
     private JMenuItem renameItem;
     private JMenuItem copyItem;
     private JMenuItem cutItem;
@@ -155,6 +157,8 @@ public class GUI {
         toolBar.setFloatable(false);
         createFolderBtn = new JButton(new ImageIcon("res\\new_folder.png"));
         createFolderBtn.setToolTipText("Создать каталог");
+        selectAllBtn=new JButton(new ImageIcon("res\\select_all.png"));
+        selectAllBtn.setToolTipText("Выделить все");
         copyBtn=new JButton(new ImageIcon("res\\copy.png"));
         copyBtn.setToolTipText("Копировать");
         cutBtn=new JButton(new ImageIcon("res\\cut.png"));
@@ -178,6 +182,10 @@ public class GUI {
         tableViewBtn = new JButton(new ImageIcon("res\\table.png"));
         tableViewBtn.setToolTipText("Таблица");
         toolBar.add(createFolderBtn);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.addSeparator();
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(selectAllBtn);
         toolBar.add(Box.createHorizontalStrut(10));
         toolBar.addSeparator();
         toolBar.add(Box.createHorizontalStrut(10));
@@ -219,10 +227,13 @@ public class GUI {
         fileMenu.add(exitItem);
 
         editMenu=new JMenu("Правка");
+        selectAllItem=new JMenuItem("Выделить всё");
         copyItem=new JMenuItem("Копировать");
         cutItem=new JMenuItem("Вырезать");
         pasteItem=new JMenuItem("Вставить");
         renameItem=new JMenuItem("Переименовать");
+        editMenu.add(selectAllItem);
+        editMenu.addSeparator();
         editMenu.add(copyItem);
         editMenu.add(cutItem);
         editMenu.add(pasteItem);
@@ -350,6 +361,8 @@ public class GUI {
         //Добавляем элементам меню слушатели событий
         exitItem.addActionListener(exitListener);
 
+        selectAllItem.addActionListener(selectAllListener);
+
         bigTilesItem.addActionListener(setBigTileView);
         smallTilesItem.addActionListener(setSmallTileView);
         tableItem.addActionListener(setTableView);
@@ -377,6 +390,7 @@ public class GUI {
         tableViewBtn.addActionListener(setTableView);
         showHiddenBtn.addActionListener(hiddenListener);
         upBtn.addActionListener(upListener);
+        selectAllBtn.addActionListener(selectAllListener);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
@@ -533,6 +547,13 @@ public class GUI {
                 fileSorter.setSortOrder(choiceSortedOrder);
                 currentExplorerPane.refreshContent();
             }
+        }
+    };
+
+    private ActionListener selectAllListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            currentExplorerPane.selectAllElements();
         }
     };
 

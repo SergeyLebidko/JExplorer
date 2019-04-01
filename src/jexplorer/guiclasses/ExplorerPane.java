@@ -9,5 +9,6 @@ public interface ExplorerPane {
     void refreshContent();
     void setShowHiddenElements(boolean show);
     File[] getSelectedElements();
+    void selectAllElements();
 
 }

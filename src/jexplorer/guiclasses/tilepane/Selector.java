@@ -85,6 +85,14 @@ public class Selector {
         }
     }
 
+    public void selectAll(){
+        if (header==(-1))header=0;
+        for (Element element: elements){
+            element.lab.setBackground(backColorForSelect);
+            element.isSelected=true;
+        }
+    }
+
     public File[] getSelectedFiles() {
         File[] result;
         int countSelectedElements = getCountSelectedElements();
