@@ -21,6 +21,7 @@ public class TileExplorerPane implements ExplorerPane {
     private JPanel contentPane;
     private JLabel[] content;
     private AdaptiveGridLayout currentLayout;
+    private JPopupMenu popupMenu;
     private FileSystemExplorer fileSystemExplorer;
     private Selector selector;
 
@@ -170,6 +171,10 @@ public class TileExplorerPane implements ExplorerPane {
         refreshContent();
     }
 
+    public void setPopupMenu(JPopupMenu popupMenu) {
+        this.popupMenu = popupMenu;
+    }
+
     public Component getVisualComponent() {
         return scrollPane;
     }
@@ -191,12 +196,12 @@ public class TileExplorerPane implements ExplorerPane {
         }
 
         //Затем в зависимости от опции отображения скрытых элементов создаем новый массив меток для отображения элементов
-        if (showHiddenElements){
+        if (showHiddenElements) {
             content = new JLabel[elements.length];
-        }else {
-            int countNoHiddens=0;
-            for (File element: elements){
-                if (!element.isHidden())countNoHiddens++;
+        } else {
+            int countNoHiddens = 0;
+            for (File element : elements) {
+                if (!element.isHidden()) countNoHiddens++;
             }
             content = new JLabel[countNoHiddens];
         }
@@ -229,13 +234,13 @@ public class TileExplorerPane implements ExplorerPane {
         }
     }
 
-    public File[] getSelectedElements(){
+    public File[] getSelectedElements() {
         File[] result;
         result = new File[0];    //Код-заглушка, который должен быть удален
         return result;
     }
 
-    public void selectAllElements(){
+    public void selectAllElements() {
         selector.selectAll();
     }
 
@@ -250,49 +255,49 @@ public class TileExplorerPane implements ExplorerPane {
 
     private void setTexts(File element, JLabel lab) {
         lab.setText(element.getName());
-        String toolTipText="<html>";
+        String toolTipText = "<html>";
 
-        NumberFormat nf=NumberFormat.getInstance();
+        NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
-        if (element.isFile()){
-            toolTipText+="Файл: "+element.getName();
+        if (element.isFile()) {
+            toolTipText += "Файл: " + element.getName();
 
-            String type=fileSystemExplorer.getFileType(element).getTooltipText();
-            toolTipText+=(type.equals("")?"":"<br>Тип: "+type);
+            String type = fileSystemExplorer.getFileType(element).getTooltipText();
+            toolTipText += (type.equals("") ? "" : "<br>Тип: " + type);
 
             long size;
-            String postFix="";
-            size=element.length();
-            if (size<1024){
-                postFix=nf.format(size)+" б.";
+            String postFix = "";
+            size = element.length();
+            if (size < 1024) {
+                postFix = nf.format(size) + " б.";
             }
-            if (size>=1024 & size<1048576){
-                postFix=nf.format((double) size/1024)+" Кб.";
+            if (size >= 1024 & size < 1048576) {
+                postFix = nf.format((double) size / 1024) + " Кб.";
             }
-            if (size>=1048576 & size<1073741824){
-                postFix=nf.format((double)size/1048576)+" Мб.";
+            if (size >= 1048576 & size < 1073741824) {
+                postFix = nf.format((double) size / 1048576) + " Мб.";
             }
-            if (size>=1073741824){
-                postFix=nf.format((double)size/1073741824)+" Гб.";
+            if (size >= 1073741824) {
+                postFix = nf.format((double) size / 1073741824) + " Гб.";
             }
-            toolTipText+="<br>Размер: "+postFix;
+            toolTipText += "<br>Размер: " + postFix;
         }
 
-        if (element.isDirectory()){
-            toolTipText+="Каталог: "+element.getName();
+        if (element.isDirectory()) {
+            toolTipText += "Каталог: " + element.getName();
         }
 
-        DateFormat df=DateFormat.getInstance();
+        DateFormat df = DateFormat.getInstance();
         try {
-            toolTipText+="<br>Дата создания: "+df.format(fileSystemExplorer.getDateCreated(element));
+            toolTipText += "<br>Дата создания: " + df.format(fileSystemExplorer.getDateCreated(element));
         } catch (Exception e) {
-            toolTipText+="Не удалось установить дату создания";
+            toolTipText += "Не удалось установить дату создания";
         }
 
         try {
-            toolTipText+="<br>Дата последнего изменения: "+df.format(fileSystemExplorer.getDateModified(element));
+            toolTipText += "<br>Дата последнего изменения: " + df.format(fileSystemExplorer.getDateModified(element));
         } catch (Exception e) {
-            toolTipText+="Не удалось установить дату последнего изменения";
+            toolTipText += "Не удалось установить дату последнего изменения";
         }
 
         lab.setToolTipText(toolTipText);
@@ -336,22 +341,34 @@ public class TileExplorerPane implements ExplorerPane {
     private MouseListener ml = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            //Обрабатываем один щелчек левой кнопкой мыши
-            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON1){
+            //Обрабатываем один щелчек правой кнопкой мышки
+            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON3) {
+                if (popupMenu == null) return;
                 JLabel lab = (JLabel) e.getSource();
-                if (e.getModifiersEx()==0)selector.simpleSelect(lab);    //Если на клавиатуре не нажато никаких дополнительных клавиш
-                if (e.getModifiersEx()==128)selector.ctrlSelect(lab);    //Если на клавиатуре нажата клавиша Shift
-                if (e.getModifiersEx()==64)selector.shiftSelect(lab);    //Если на клавиатуре нажата клавиша Ctrl
+                if (!selector.isSelect(lab))selector.simpleSelect(lab);
+                popupMenu.show(lab, e.getX(), e.getY());
+                return;
+            }
+
+            //Обрабатываем один щелчек левой кнопкой мышки
+            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON1) {
+                JLabel lab = (JLabel) e.getSource();
+                if (e.getModifiersEx() == 0)
+                    selector.simpleSelect(lab);                          //Если на клавиатуре не нажато никаких дополнительных клавиш
+                if (e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK)
+                    selector.ctrlSelect(lab);      //Если на клавиатуре нажата клавиша Shift
+                if (e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK)
+                    selector.shiftSelect(lab);    //Если на клавиатуре нажата клавиша Ctrl
                 return;
             }
 
             //Обрабатываем двойной щелчек левой кнопкой мышки
-            if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1 & e.getModifiersEx()==0) {
+            if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1) {
                 JLabel lab = (JLabel) e.getSource();
                 File file = contentFileMap.get(lab);
                 GUI gui = MainClass.getGui();
-                if (!file.exists()){
-                    gui.showErrorDialog("Не получается открыть "+file.getName());
+                if (!file.exists()) {
+                    gui.showErrorDialog("Не получается открыть " + file.getName());
                     return;
                 }
                 if (file.isFile()) {

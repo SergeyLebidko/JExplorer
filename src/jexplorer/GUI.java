@@ -88,6 +88,8 @@ public class GUI {
     private JMenu helpMenu;
     private JMenuItem aboutItem;
 
+    private JPopupMenu popupMenu;
+
     public GUI() {
 
         //Заменяем текущий Look and Feel системным
@@ -307,6 +309,23 @@ public class GUI {
         aboutItem = new JMenuItem("О программе");
 
         helpMenu.add(aboutItem);
+
+        //Создаем всплывающе меню
+        popupMenu=new JPopupMenu();
+        popupMenu.add(selectAllItem);
+        popupMenu.addSeparator();
+        popupMenu.add(copyItem);
+        popupMenu.add(cutItem);
+        popupMenu.add(pasteItem);
+        popupMenu.addSeparator();
+        popupMenu.add(renameItem);
+        popupMenu.add(deleteItem);
+        popupMenu.addSeparator();
+        popupMenu.add(propertiesItem);
+
+        //Передаем созданное всплывающее меню файловым панелям
+        tableExplorer.setPopupMenu(popupMenu);
+        tileExplorer.setPopupMenu(popupMenu);
 
         //Добавляем созданные элементы в главное меню
         mainMenu.add(fileMenu);

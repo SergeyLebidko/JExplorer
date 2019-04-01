@@ -23,6 +23,7 @@ public class TableExplorerPane implements ExplorerPane {
     private JScrollPane scrollPane;
     private JTable contentTable;
     private TableExplorerModel tableModel;
+    private JPopupMenu popupMenu;
     private FileSystemExplorer fileSystemExplorer;
 
     private final Color backColor = Color.WHITE;
@@ -64,6 +65,10 @@ public class TableExplorerPane implements ExplorerPane {
         if (show == showHiddenElements) return;
         showHiddenElements = show;
         refreshContent();
+    }
+
+    public void setPopupMenu(JPopupMenu popupMenu) {
+        this.popupMenu = popupMenu;
     }
 
     public Component getVisualComponent() {
@@ -111,6 +116,16 @@ public class TableExplorerPane implements ExplorerPane {
     private MouseListener tableClickListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
+            //Обрабатываем один щелчек правой кнопкой мышки
+            if (e.getClickCount() == 1 & e.getButton() == MouseEvent.BUTTON3) {
+                if (popupMenu == null) return;
+                int rowNum = contentTable.rowAtPoint(e.getPoint());
+                boolean isRowSelected=contentTable.getSelectionModel().isSelectedIndex(rowNum);
+                if (!isRowSelected)contentTable.getSelectionModel().setSelectionInterval(rowNum,rowNum);
+                popupMenu.show(contentTable, e.getX(), e.getY());
+            }
+
+            //Обрабатываем двойной щелчек левой кнопкой мышки
             if (e.getClickCount() == 2 & e.getButton() == MouseEvent.BUTTON1) {
                 File file = (File) tableModel.getValueAt(contentTable.getSelectedRow(), 0);
                 GUI gui = MainClass.getGui();

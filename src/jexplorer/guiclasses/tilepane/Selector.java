@@ -85,6 +85,13 @@ public class Selector {
         }
     }
 
+    public boolean isSelect(JLabel lab){
+        for (Element element: elements){
+            if (element.lab==lab & element.isSelected)return true;
+        }
+        return false;
+    }
+
     public void selectAll(){
         header=0;
         for (Element element: elements){
