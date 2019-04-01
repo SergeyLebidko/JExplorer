@@ -86,7 +86,7 @@ public class Selector {
     }
 
     public void selectAll(){
-        if (header==(-1))header=0;
+        header=0;
         for (Element element: elements){
             element.lab.setBackground(backColorForSelect);
             element.isSelected=true;

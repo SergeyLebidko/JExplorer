@@ -11,6 +11,7 @@ import jexplorer.guiclasses.tablepane.TableExplorerPane;
 import jexplorer.guiclasses.tilepane.TileExplorerPane;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -130,7 +131,7 @@ public class GUI {
         //Создаем вспомогательную панель для отображения списка корневых точек
         JPanel rPane = new JPanel();
         rPane.setLayout(new BorderLayout());
-        rPane.setPreferredSize(new Dimension(WIDTH_FRM / 6, (int) (HEIGHT_FRM * 0.9)));
+        rPane.setPreferredSize(new Dimension((int) (WIDTH_FRM * 0.15), (int) (HEIGHT_FRM * 0.9)));
         rootPointExplorerPane = new RootPointExplorerPane();
         rPane.add(rootPointExplorerPane.getVisualComponent(), BorderLayout.CENTER);
 
@@ -140,6 +141,7 @@ public class GUI {
         //Создаем кнопки "Вверх" и "Обновить" и адресную строку
         upPane.setLayout(new BorderLayout());
         Box adressPane = Box.createHorizontalBox();
+        adressPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         upBtn = new JButton(new ImageIcon("res\\up.png"));
         upBtn.setToolTipText("Вверх");
         refreshPanesBtn = new JButton(new ImageIcon("res\\refresh.png"));
@@ -154,22 +156,23 @@ public class GUI {
 
         //Создаем панель инструментов
         JToolBar toolBar = new JToolBar();
+        toolBar.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         toolBar.setFloatable(false);
         createFolderBtn = new JButton(new ImageIcon("res\\new_folder.png"));
         createFolderBtn.setToolTipText("Создать каталог");
-        selectAllBtn=new JButton(new ImageIcon("res\\select_all.png"));
+        selectAllBtn = new JButton(new ImageIcon("res\\select_all.png"));
         selectAllBtn.setToolTipText("Выделить все");
-        copyBtn=new JButton(new ImageIcon("res\\copy.png"));
+        copyBtn = new JButton(new ImageIcon("res\\copy.png"));
         copyBtn.setToolTipText("Копировать");
-        cutBtn=new JButton(new ImageIcon("res\\cut.png"));
+        cutBtn = new JButton(new ImageIcon("res\\cut.png"));
         cutBtn.setToolTipText("Вырезать");
-        pasteBtn=new JButton(new ImageIcon("res\\paste.png"));
+        pasteBtn = new JButton(new ImageIcon("res\\paste.png"));
         pasteBtn.setToolTipText("Вставить");
-        renameBtn=new JButton(new ImageIcon("res\\rename.png"));
+        renameBtn = new JButton(new ImageIcon("res\\rename.png"));
         renameBtn.setToolTipText("Переименовать");
-        deleteBtn=new JButton(new ImageIcon("res\\delete.png"));
+        deleteBtn = new JButton(new ImageIcon("res\\delete.png"));
         deleteBtn.setToolTipText("Удалить");
-        propertiesBtn=new JButton(new ImageIcon("res\\properties.png"));
+        propertiesBtn = new JButton(new ImageIcon("res\\properties.png"));
         propertiesBtn.setToolTipText("Свойства");
         showHiddenBtn = new JToggleButton(new ImageIcon("res\\do_not_show_hidden.png"));
         showHiddenBtn.setSelectedIcon(new ImageIcon("res\\show_hidden.png"));
@@ -216,8 +219,8 @@ public class GUI {
 
         fileMenu = new JMenu("Файл");
         createFolderItem = new JMenuItem("Создать папку");
-        deleteItem=new JMenuItem("Удалить");
-        propertiesItem=new JMenuItem("Свойства");
+        deleteItem = new JMenuItem("Удалить");
+        propertiesItem = new JMenuItem("Свойства");
         exitItem = new JMenuItem("Выход");
         fileMenu.add(createFolderItem);
         fileMenu.add(deleteItem);
@@ -226,12 +229,12 @@ public class GUI {
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
 
-        editMenu=new JMenu("Правка");
-        selectAllItem=new JMenuItem("Выделить всё");
-        copyItem=new JMenuItem("Копировать");
-        cutItem=new JMenuItem("Вырезать");
-        pasteItem=new JMenuItem("Вставить");
-        renameItem=new JMenuItem("Переименовать");
+        editMenu = new JMenu("Правка");
+        selectAllItem = new JMenuItem("Выделить всё");
+        copyItem = new JMenuItem("Копировать");
+        cutItem = new JMenuItem("Вырезать");
+        pasteItem = new JMenuItem("Вставить");
+        renameItem = new JMenuItem("Переименовать");
         editMenu.add(selectAllItem);
         editMenu.addSeparator();
         editMenu.add(copyItem);
@@ -359,9 +362,16 @@ public class GUI {
         };
 
         //Добавляем элементам меню слушатели событий
+        createFolderItem.addActionListener(createFolderListener);
+        deleteItem.addActionListener(deleteListener);
+        propertiesItem.addActionListener(propertiesListener);
         exitItem.addActionListener(exitListener);
 
         selectAllItem.addActionListener(selectAllListener);
+        copyItem.addActionListener(copyListener);
+        cutItem.addActionListener(cutListener);
+        pasteItem.addActionListener(pasteListener);
+        renameItem.addActionListener(renameListener);
 
         bigTilesItem.addActionListener(setBigTileView);
         smallTilesItem.addActionListener(setSmallTileView);
@@ -390,7 +400,14 @@ public class GUI {
         tableViewBtn.addActionListener(setTableView);
         showHiddenBtn.addActionListener(hiddenListener);
         upBtn.addActionListener(upListener);
+        createFolderBtn.addActionListener(createFolderListener);
         selectAllBtn.addActionListener(selectAllListener);
+        copyBtn.addActionListener(copyListener);
+        cutBtn.addActionListener(cutListener);
+        pasteBtn.addActionListener(pasteListener);
+        renameBtn.addActionListener(renameListener);
+        deleteBtn.addActionListener(deleteListener);
+        propertiesBtn.addActionListener(propertiesListener);
 
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
@@ -550,10 +567,59 @@ public class GUI {
         }
     };
 
+    private ActionListener createFolderListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Создать папку...");
+        }
+    };
+
     private ActionListener selectAllListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             currentExplorerPane.selectAllElements();
+        }
+    };
+
+    private ActionListener copyListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Копировать...");
+        }
+    };
+
+    private ActionListener cutListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Вырезать...");
+        }
+    };
+
+    private ActionListener pasteListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Вставить...");
+        }
+    };
+
+    private ActionListener renameListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Переименовать...");
+        }
+    };
+
+    private ActionListener deleteListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Удалить...");
+        }
+    };
+
+    private ActionListener propertiesListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Свойства...");
         }
     };
 
