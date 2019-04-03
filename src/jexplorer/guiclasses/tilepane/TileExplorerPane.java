@@ -239,9 +239,7 @@ public class TileExplorerPane implements ExplorerPane {
     }
 
     public File[] getSelectedElements() {
-        File[] result;
-        result = new File[0];    //Код-заглушка, который должен быть удален
-        return result;
+        return selector.getSelectedFiles();
     }
 
     public void selectAllElements() {

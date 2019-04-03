@@ -4,6 +4,7 @@ import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.fileexplorerclasses.SortTypes;
 import jexplorer.fileexplorerclasses.SortOrders;
+import jexplorer.fileutilities.DirectoryCreator;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
@@ -107,6 +108,12 @@ public class GUI {
             JOptionPane.showMessageDialog(null, "Возникла ошибка при попытке переключить стиль интерфейса. Работа программы будет прекращена", "Ошибка", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
+
+        //Локализация диалоговых окон
+        UIManager.put("OptionPane.yesButtonText", "Да");
+        UIManager.put("OptionPane.noButtonText", "Нет");
+        UIManager.put("OptionPane.cancelButtonText", "Отмена");
+        UIManager.put("OptionPane.inputDialogTitle", "");
 
         //Получаем от MainClass объект для работы с файловой системой
         fileSystemExplorer = MainClass.getFileSystemExplorer();
@@ -612,7 +619,17 @@ public class GUI {
     private ActionListener createFolderListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Создать папку...");
+            String name = JOptionPane.showInputDialog(frm, "Введите имя папки", "");
+            if (name==null)return;
+            name=name.trim();
+            DirectoryCreator directoryCreator=MainClass.getDirectoryCreator();
+            try {
+                directoryCreator.createDirectory(currentExplorerPane.getCurrentDirectory(), name);
+            } catch (Exception ex) {
+                showErrorDialog(ex.getMessage());
+                return;
+            }
+            currentExplorerPane.refreshContent();
         }
     };
 
