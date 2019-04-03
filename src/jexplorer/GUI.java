@@ -239,7 +239,7 @@ public class GUI {
         fileMenu.add(exitItem);
 
         editMenu = new JMenu("Правка");
-        selectAllItem = new JMenuItem("Выделить всё");
+        selectAllItem = new JMenuItem("Выделить все");
         copyItem = new JMenuItem("Копировать");
         cutItem = new JMenuItem("Вырезать");
         pasteItem = new JMenuItem("Вставить");

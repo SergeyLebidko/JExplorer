@@ -226,6 +226,10 @@ public class TileExplorerPane implements ExplorerPane {
         contentPane.repaint();
     }
 
+    public File getCurrentDirectory(){
+        return fileSystemExplorer.getCurrentDirectory();
+    }
+
     private void clearContentPane() {
         if (contentPane.getComponentCount() == 0) return;
         Component[] components = contentPane.getComponents();

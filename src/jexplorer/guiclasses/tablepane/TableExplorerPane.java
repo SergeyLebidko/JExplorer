@@ -97,6 +97,10 @@ public class TableExplorerPane implements ExplorerPane {
         tableModel.refreshContent(content.toArray(new File[content.size()]));
     }
 
+    public File getCurrentDirectory(){
+        return fileSystemExplorer.getCurrentDirectory();
+    }
+
     public File[] getSelectedElements() {
         File[] result;
         int[] selectedRows = contentTable.getSelectedRows();
