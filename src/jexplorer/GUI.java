@@ -5,6 +5,8 @@ import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.fileexplorerclasses.SortTypes;
 import jexplorer.fileexplorerclasses.SortOrders;
 import jexplorer.fileutilities.DirectoryCreator;
+import jexplorer.fileutilities.PropertyReceiver;
+import jexplorer.fileutilities.PropertySet;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
@@ -12,10 +14,10 @@ import jexplorer.guiclasses.tablepane.TableExplorerPane;
 import jexplorer.guiclasses.tilepane.TileExplorerPane;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class GUI {
 
@@ -620,9 +622,9 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             String name = JOptionPane.showInputDialog(frm, "Введите имя папки", "");
-            if (name==null)return;
-            name=name.trim();
-            DirectoryCreator directoryCreator=MainClass.getDirectoryCreator();
+            if (name == null) return;
+            name = name.trim();
+            DirectoryCreator directoryCreator = MainClass.getDirectoryCreator();
             try {
                 directoryCreator.createDirectory(currentExplorerPane.getCurrentDirectory(), name);
             } catch (Exception ex) {
@@ -678,7 +680,56 @@ public class GUI {
     private ActionListener propertiesListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Свойства...");
+            File[] selectedFiles = currentExplorerPane.getSelectedElements();
+            if (selectedFiles.length == 0) return;
+            PropertyReceiver propertyReceiver = MainClass.getPropertyReceiver();
+            PropertySet propertySet;
+
+            try {
+                propertySet = propertyReceiver.getPropertySet(selectedFiles);
+            } catch (Exception ex) {
+                showErrorDialog(ex.getMessage());
+                return;
+            }
+
+            if (propertySet.isPropertiesListEmpty()){
+                showErrorDialog("Не удалось получить свойства выделенных объектов");
+            }
+
+            //Выводим список объектов, свойства которых получить не удалось
+            if (!propertySet.isPassListEmpty()){
+                JLabel lab=new JLabel();
+                String text="<html>Совйства следующих объектов получить не удалось:";
+                for (File file:propertySet.getPassList()){
+                    text+="<br>"+file.getAbsolutePath();
+                }
+                lab.setText(text);
+                JOptionPane.showMessageDialog(frm, lab, "", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            //Формируем список свойств
+            String name;
+            String value;
+            int pos;
+            JPanel propertyPane=new JPanel();
+            propertyPane.setLayout(new GridLayout(0,1));
+            for (String property: propertySet.getPropertiesList()){
+                Box line=Box.createHorizontalBox();
+                JLabel nameLab=new JLabel();
+                JLabel valueLab=new JLabel();
+                pos=property.indexOf('*');
+                name=property.substring(0,pos);
+                value=property.substring(pos+1,property.length());
+                nameLab.setText(name);
+                valueLab.setText(value);
+                line.add(nameLab);
+                line.add(Box.createHorizontalStrut(10));
+                line.add(Box.createHorizontalGlue());
+                line.add(valueLab);
+                propertyPane.add(line);
+            }
+            JOptionPane.showMessageDialog(frm,propertyPane,"Свойства",JOptionPane.INFORMATION_MESSAGE);
+
         }
     };
 

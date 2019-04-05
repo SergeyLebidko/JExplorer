@@ -3,6 +3,7 @@ package jexplorer;
 import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.fileutilities.DirectoryCreator;
+import jexplorer.fileutilities.PropertyReceiver;
 
 import javax.swing.*;
 
@@ -16,6 +17,9 @@ public class MainClass {
 
     //Объект, необходимый для создания каталогов
     private final static DirectoryCreator directoryCreator = new DirectoryCreator();
+
+    //Объект, необходимый для получения свойств наборов файлов и каталогов
+    private final static PropertyReceiver propertyReceiver = new PropertyReceiver();
 
     //Объект GUI, создающий все компоненты окна приложения
     private final static GUI gui = new GUI();
@@ -33,6 +37,10 @@ public class MainClass {
 
     public static DirectoryCreator getDirectoryCreator() {
         return directoryCreator;
+    }
+
+    public static PropertyReceiver getPropertyReceiver(){
+        return propertyReceiver;
     }
 
     public static GUI getGui() {
