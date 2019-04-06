@@ -78,7 +78,7 @@ public class PropertyReceiver {
                 result.addProrerty("Имя", file.getName());
                 FileTypes fileType = fileSystemExplorer.getFileType(file);
                 if (fileType != FileTypes.OTHER) {
-                    result.addProrerty("Тип файла", fileType.getName());
+                    result.addProrerty("Тип файла", fileType.getTooltipText());
                 }
                 result.addProrerty("Размер", sizeToString(file.length()));
                 try {
@@ -105,7 +105,7 @@ public class PropertyReceiver {
                 }
                 result.addProrerty("Размер", sizeToString(directoryWalker.getTotalFileSize()));
                 result.addProrerty("Количество файлов", countToString(directoryWalker.getFileCount()));
-                result.addProrerty("Количество папок", countToString(directoryWalker.getDirCount()+1));
+                result.addProrerty("Количество папок", countToString(directoryWalker.getDirCount()));
                 return result;
             }
 

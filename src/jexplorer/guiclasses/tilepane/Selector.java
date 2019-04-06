@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 
 public class Selector {
 
@@ -85,18 +86,18 @@ public class Selector {
         }
     }
 
-    public boolean isSelect(JLabel lab){
-        for (Element element: elements){
-            if (element.lab==lab & element.isSelected)return true;
+    public boolean isSelect(JLabel lab) {
+        for (Element element : elements) {
+            if (element.lab == lab & element.isSelected) return true;
         }
         return false;
     }
 
-    public void selectAll(){
-        header=0;
-        for (Element element: elements){
+    public void selectAll() {
+        header = 0;
+        for (Element element : elements) {
             element.lab.setBackground(backColorForSelect);
-            element.isSelected=true;
+            element.isSelected = true;
         }
     }
 
@@ -104,8 +105,12 @@ public class Selector {
         File[] result;
         int countSelectedElements = getCountSelectedElements();
         result = new File[countSelectedElements];
-        for (int i = 0; i < countSelectedElements; i++) {
-            if (elements[i].isSelected) result[i] = fileMap.get(elements[i].lab);
+        int j=0;
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i].isSelected) {
+                result[j] = fileMap.get(elements[i].lab);
+                j++;
+            }
         }
         return result;
     }

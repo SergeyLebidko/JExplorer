@@ -723,7 +723,7 @@ public class GUI {
                 nameLab.setText(name);
                 valueLab.setText(value);
                 line.add(nameLab);
-                line.add(Box.createHorizontalStrut(10));
+                line.add(Box.createHorizontalStrut(40));
                 line.add(Box.createHorizontalGlue());
                 line.add(valueLab);
                 propertyPane.add(line);
