@@ -678,7 +678,25 @@ public class GUI {
     private ActionListener deleteListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Удалить...");
+            File[] removeList = currentExplorerPane.getSelectedElements();
+            if (removeList.length==0)return;
+            Remover remover = MainClass.getRemover();
+            ResultSet resultSet = remover.remove(removeList);
+
+            if (!resultSet.isErrorListEmpty()){
+                JLabel lab = new JLabel();
+                String text = "<html>Следующие объекты удалить не удалось:";
+                for (File file : resultSet.getError()) {
+                    text += "<br>" + file.getAbsolutePath();
+                }
+                lab.setText(text);
+                JOptionPane.showMessageDialog(frm, lab, "", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            //Отображаем количество удаленных объектов
+            JOptionPane.showMessageDialog(frm, createResultPanel(resultSet), "Удалено", JOptionPane.INFORMATION_MESSAGE);
+
+            currentExplorerPane.refreshContent();
         }
     };
 
@@ -704,7 +722,7 @@ public class GUI {
             //Выводим список объектов, свойства которых получить не удалось
             if (!resultSet.isErrorListEmpty()) {
                 JLabel lab = new JLabel();
-                String text = "<html>Совйства следующих объектов получить не удалось:";
+                String text = "<html>Свойства следующих объектов получить не удалось:";
                 for (File file : resultSet.getError()) {
                     text += "<br>" + file.getAbsolutePath();
                 }
@@ -712,31 +730,35 @@ public class GUI {
                 JOptionPane.showMessageDialog(frm, lab, "", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            //Формируем список свойств
-            String name;
-            String value;
-            int pos;
-            JPanel propertyPane = new JPanel();
-            propertyPane.setLayout(new GridLayout(0, 1));
-            for (String property : resultSet.getResult()) {
-                Box line = Box.createHorizontalBox();
-                JLabel nameLab = new JLabel();
-                JLabel valueLab = new JLabel();
-                pos = property.indexOf('*');
-                name = property.substring(0, pos);
-                value = property.substring(pos + 1, property.length());
-                nameLab.setText(name);
-                valueLab.setText(value);
-                line.add(nameLab);
-                line.add(Box.createHorizontalStrut(40));
-                line.add(Box.createHorizontalGlue());
-                line.add(valueLab);
-                propertyPane.add(line);
-            }
-            JOptionPane.showMessageDialog(frm, propertyPane, "Свойства", JOptionPane.INFORMATION_MESSAGE);
+            //Отображаем список свойств
+            JOptionPane.showMessageDialog(frm, createResultPanel(resultSet), "Свойства", JOptionPane.INFORMATION_MESSAGE);
 
         }
     };
+
+    private JPanel createResultPanel(ResultSet resultSet){
+        String name;
+        String value;
+        int pos;
+        JPanel resultPane = new JPanel();
+        resultPane.setLayout(new GridLayout(0, 1));
+        for (String property : resultSet.getResult()) {
+            Box line = Box.createHorizontalBox();
+            JLabel nameLab = new JLabel();
+            JLabel valueLab = new JLabel();
+            pos = property.indexOf('*');
+            name = property.substring(0, pos);
+            value = property.substring(pos + 1, property.length());
+            nameLab.setText(name);
+            valueLab.setText(value);
+            line.add(nameLab);
+            line.add(Box.createHorizontalStrut(40));
+            line.add(Box.createHorizontalGlue());
+            line.add(valueLab);
+            resultPane.add(line);
+        }
+        return resultPane;
+    }
 
     //Метод помещает выделенные файлы и каталоги в буфер обмена
     //Если его параметр равен true, то при вставке в новое место они должны быть удалены в каталоге-источнике
