@@ -692,16 +692,16 @@ public class GUI {
                 return;
             }
 
-            if (resultSet.isResultListEmpty()){
+            if (resultSet.isResultListEmpty()) {
                 showErrorDialog("Не удалось получить свойства выделенных объектов");
             }
 
             //Выводим список объектов, свойства которых получить не удалось
-            if (!resultSet.isErrorListEmpty()){
-                JLabel lab=new JLabel();
-                String text="<html>Совйства следующих объектов получить не удалось:";
-                for (File file: resultSet.getError()){
-                    text+="<br>"+file.getAbsolutePath();
+            if (!resultSet.isErrorListEmpty()) {
+                JLabel lab = new JLabel();
+                String text = "<html>Совйства следующих объектов получить не удалось:";
+                for (File file : resultSet.getError()) {
+                    text += "<br>" + file.getAbsolutePath();
                 }
                 lab.setText(text);
                 JOptionPane.showMessageDialog(frm, lab, "", JOptionPane.INFORMATION_MESSAGE);
@@ -711,15 +711,15 @@ public class GUI {
             String name;
             String value;
             int pos;
-            JPanel propertyPane=new JPanel();
-            propertyPane.setLayout(new GridLayout(0,1));
-            for (String property: resultSet.getResult()){
-                Box line=Box.createHorizontalBox();
-                JLabel nameLab=new JLabel();
-                JLabel valueLab=new JLabel();
-                pos=property.indexOf('*');
-                name=property.substring(0,pos);
-                value=property.substring(pos+1,property.length());
+            JPanel propertyPane = new JPanel();
+            propertyPane.setLayout(new GridLayout(0, 1));
+            for (String property : resultSet.getResult()) {
+                Box line = Box.createHorizontalBox();
+                JLabel nameLab = new JLabel();
+                JLabel valueLab = new JLabel();
+                pos = property.indexOf('*');
+                name = property.substring(0, pos);
+                value = property.substring(pos + 1, property.length());
                 nameLab.setText(name);
                 valueLab.setText(value);
                 line.add(nameLab);
@@ -728,7 +728,7 @@ public class GUI {
                 line.add(valueLab);
                 propertyPane.add(line);
             }
-            JOptionPane.showMessageDialog(frm,propertyPane,"Свойства",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(frm, propertyPane, "Свойства", JOptionPane.INFORMATION_MESSAGE);
 
         }
     };
