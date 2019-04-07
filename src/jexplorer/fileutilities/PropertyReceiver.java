@@ -63,8 +63,8 @@ public class PropertyReceiver {
         directoryWalker = new DirectoryWalker();
     }
 
-    public PropertySet getPropertySet(File[] files) throws Exception {
-        PropertySet result = new PropertySet();
+    public ResultSet getPropertySet(File[] files) throws Exception {
+        ResultSet result = new ResultSet();
 
         //Вариант 1. Передан один объект
         if (files.length == 1) {
@@ -75,20 +75,20 @@ public class PropertyReceiver {
 
             //Если этот объект - файл
             if (file.isFile()) {
-                result.addProrerty("Имя", file.getName());
+                result.addResult("Имя", file.getName());
                 FileTypes fileType = fileSystemExplorer.getFileType(file);
                 if (fileType != FileTypes.OTHER) {
-                    result.addProrerty("Тип файла", fileType.getTooltipText());
+                    result.addResult("Тип файла", fileType.getTooltipText());
                 }
-                result.addProrerty("Размер", sizeToString(file.length()));
+                result.addResult("Размер", sizeToString(file.length()));
                 try {
                     Date dateCreated = fileSystemExplorer.getDateCreated(file);
-                    result.addProrerty("Дата создания", dateToString(dateCreated));
+                    result.addResult("Дата создания", dateToString(dateCreated));
                 } catch (Exception ex) {
                 }
                 try {
                     Date dateModified = fileSystemExplorer.getDateModified(file);
-                    result.addProrerty("Дата создания", dateToString(dateModified));
+                    result.addResult("Дата создания", dateToString(dateModified));
                 } catch (Exception ex) {
                 }
                 return result;
@@ -96,16 +96,16 @@ public class PropertyReceiver {
 
             //Если этот объект - каталог
             if (file.isDirectory()) {
-                result.addProrerty("Имя", file.getName());
-                result.addProrerty("Тип", "Папка");
+                result.addResult("Имя", file.getName());
+                result.addResult("Тип", "Папка");
                 try {
                     directoryWalker.calculate(file);
                 } catch (Exception ex) {
                     throw new Exception("Невозможно получить свойства " + file.getName());
                 }
-                result.addProrerty("Размер", sizeToString(directoryWalker.getTotalFileSize()));
-                result.addProrerty("Количество файлов", countToString(directoryWalker.getFileCount()));
-                result.addProrerty("Количество папок", countToString(directoryWalker.getDirCount()));
+                result.addResult("Размер", sizeToString(directoryWalker.getTotalFileSize()));
+                result.addResult("Количество файлов", countToString(directoryWalker.getFileCount()));
+                result.addResult("Количество папок", countToString(directoryWalker.getDirCount()));
                 return result;
             }
 
@@ -118,7 +118,7 @@ public class PropertyReceiver {
             long totalFileSize = 0;      //Общий размер файлов в группе
             for (File file : files) {
                 if (!file.exists()) {
-                    result.addPass(file);
+                    result.addError(file);
                     continue;
                 }
                 if (file.isFile()){
@@ -131,7 +131,7 @@ public class PropertyReceiver {
                     try {
                         directoryWalker.calculate(file);
                     }catch (Exception ex){
-                        result.addPass(file);
+                        result.addError(file);
                         continue;
                     }
                     fileCount+=directoryWalker.getFileCount();
@@ -140,17 +140,17 @@ public class PropertyReceiver {
                 }
             }
             if (fileCount!=0 & dirCount==0){
-                result.addProrerty("Тип", "Файлы");
+                result.addResult("Тип", "Файлы");
             }
             if (fileCount==0 & dirCount!=0){
-                result.addProrerty("Тип", "Папки");
+                result.addResult("Тип", "Папки");
             }
             if (fileCount!=0 & dirCount!=0){
-                result.addProrerty("Тип", "Файлы и папки");
+                result.addResult("Тип", "Файлы и папки");
             }
-            result.addProrerty("Размер", sizeToString(totalFileSize));
-            result.addProrerty("Количество файлов", countToString(fileCount));
-            result.addProrerty("Количество папок", countToString(dirCount));
+            result.addResult("Размер", sizeToString(totalFileSize));
+            result.addResult("Количество файлов", countToString(fileCount));
+            result.addResult("Количество папок", countToString(dirCount));
         }
 
         return result;

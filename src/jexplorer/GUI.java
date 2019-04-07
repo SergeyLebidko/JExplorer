@@ -6,7 +6,7 @@ import jexplorer.fileexplorerclasses.SortTypes;
 import jexplorer.fileexplorerclasses.SortOrders;
 import jexplorer.fileutilities.DirectoryCreator;
 import jexplorer.fileutilities.PropertyReceiver;
-import jexplorer.fileutilities.PropertySet;
+import jexplorer.fileutilities.ResultSet;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
@@ -683,24 +683,24 @@ public class GUI {
             File[] selectedFiles = currentExplorerPane.getSelectedElements();
             if (selectedFiles.length == 0) return;
             PropertyReceiver propertyReceiver = MainClass.getPropertyReceiver();
-            PropertySet propertySet;
+            ResultSet resultSet;
 
             try {
-                propertySet = propertyReceiver.getPropertySet(selectedFiles);
+                resultSet = propertyReceiver.getPropertySet(selectedFiles);
             } catch (Exception ex) {
                 showErrorDialog(ex.getMessage());
                 return;
             }
 
-            if (propertySet.isPropertiesListEmpty()){
+            if (resultSet.isResultListEmpty()){
                 showErrorDialog("Не удалось получить свойства выделенных объектов");
             }
 
             //Выводим список объектов, свойства которых получить не удалось
-            if (!propertySet.isPassListEmpty()){
+            if (!resultSet.isErrorListEmpty()){
                 JLabel lab=new JLabel();
                 String text="<html>Совйства следующих объектов получить не удалось:";
-                for (File file:propertySet.getPassList()){
+                for (File file: resultSet.getError()){
                     text+="<br>"+file.getAbsolutePath();
                 }
                 lab.setText(text);
@@ -713,7 +713,7 @@ public class GUI {
             int pos;
             JPanel propertyPane=new JPanel();
             propertyPane.setLayout(new GridLayout(0,1));
-            for (String property: propertySet.getPropertiesList()){
+            for (String property: resultSet.getResult()){
                 Box line=Box.createHorizontalBox();
                 JLabel nameLab=new JLabel();
                 JLabel valueLab=new JLabel();

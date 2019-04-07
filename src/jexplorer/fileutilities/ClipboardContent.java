@@ -4,12 +4,12 @@ import java.io.File;
 
 public class ClipboardContent {
 
-    public File parent;
+    public File root;
     public File[] fileList;
     public boolean isDelete;
 
-    public ClipboardContent(File parent, File[] fileList, boolean isDelete) {
-        this.parent = parent;
+    public ClipboardContent(File root, File[] fileList, boolean isDelete) {
+        this.root = root;
         this.fileList = fileList;
         this.isDelete = isDelete;
     }
