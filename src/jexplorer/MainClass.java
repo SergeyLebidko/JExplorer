@@ -23,6 +23,9 @@ public class MainClass {
     //Объект, необходимый для получения свойств наборов файлов и каталогов
     private final static PropertyReceiver propertyReceiver = new PropertyReceiver();
 
+    //Объект, необходимый для переименования файлов и каталогов
+    private final static Renamer renamer = new Renamer();
+
     //Объект, необходимый для удаления файлов и каталогов
     private final static Remover remover = new Remover();
 
@@ -53,6 +56,10 @@ public class MainClass {
 
     public static PropertyReceiver getPropertyReceiver() {
         return propertyReceiver;
+    }
+
+    public static Renamer getRenamer() {
+        return renamer;
     }
 
     public static Remover getRemover() {
