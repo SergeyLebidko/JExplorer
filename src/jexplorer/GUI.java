@@ -1,12 +1,11 @@
 package jexplorer;
 
+import com.sun.tools.javac.Main;
 import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.fileexplorerclasses.SortTypes;
 import jexplorer.fileexplorerclasses.SortOrders;
-import jexplorer.fileutilities.DirectoryCreator;
-import jexplorer.fileutilities.PropertyReceiver;
-import jexplorer.fileutilities.ResultSet;
+import jexplorer.fileutilities.*;
 import jexplorer.guiclasses.ExplorerPane;
 import jexplorer.guiclasses.adressPane.AdressPane;
 import jexplorer.guiclasses.rootpane.RootPointExplorerPane;
@@ -25,8 +24,6 @@ public class GUI {
     private final int HEIGHT_FRM = 850;
 
     private final JFrame frm;
-
-    private FileSystemExplorer fileSystemExplorer;
 
     private ExplorerPane currentExplorerPane;
 
@@ -117,9 +114,6 @@ public class GUI {
         UIManager.put("OptionPane.cancelButtonText", "Отмена");
         UIManager.put("OptionPane.inputDialogTitle", "");
 
-        //Получаем от MainClass объект для работы с файловой системой
-        fileSystemExplorer = MainClass.getFileSystemExplorer();
-
         //Создаем главное окно
         frm = new JFrame("JExplorer");
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -186,6 +180,7 @@ public class GUI {
         cutBtn.setToolTipText("Вырезать");
         pasteBtn = new JButton(new ImageIcon("res\\paste.png"));
         pasteBtn.setToolTipText("Вставить");
+        pasteBtn.setEnabled(false);
         renameBtn = new JButton(new ImageIcon("res\\rename.png"));
         renameBtn.setToolTipText("Переименовать");
         deleteBtn = new JButton(new ImageIcon("res\\delete.png"));
@@ -252,6 +247,7 @@ public class GUI {
         copyItem = new JMenuItem("Копировать");
         cutItem = new JMenuItem("Вырезать");
         pasteItem = new JMenuItem("Вставить");
+        pasteItem.setEnabled(false);
         renameItem = new JMenuItem("Переименовать");
         editMenu.add(selectAllItem);
         editMenu.addSeparator();
@@ -332,6 +328,7 @@ public class GUI {
         copyPopupItem = new JMenuItem("Копировать");
         cutPopupItem = new JMenuItem("Вырезать");
         pastePopupItem = new JMenuItem("Вставить");
+        pastePopupItem.setEnabled(false);
         renamePopupItem = new JMenuItem("Переименовать");
         deletePopupItem = new JMenuItem("Удалить");
         propertiesPopupItem = new JMenuItem("Свойства");
@@ -566,6 +563,7 @@ public class GUI {
     private ActionListener upListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            FileSystemExplorer fileSystemExplorer = MainClass.getFileSystemExplorer();
             try {
                 fileSystemExplorer.toUpDirectory();
             } catch (Exception ex) {
@@ -645,21 +643,28 @@ public class GUI {
     private ActionListener copyListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Копировать...");
+            currentSelectedContentToClipboard(false);
+            setEnabledPasteComponents();
         }
     };
 
     private ActionListener cutListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Вырезать...");
+            currentSelectedContentToClipboard(true);
+            setEnabledPasteComponents();
         }
     };
 
     private ActionListener pasteListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Вставить...");
+            System.out.println("Операция \"вставить\"...");
+
+            Copier copier = MainClass.getCopier();
+            copier.copy(currentExplorerPane.getCurrentDirectory());
+
+            setEnabledPasteComponents();
         }
     };
 
@@ -732,5 +737,24 @@ public class GUI {
 
         }
     };
+
+    //Метод помещает выделенные файлы и каталоги в буфер обмена
+    //Если его параметр равен true, то при вставке в новое место они должны быть удалены в каталоге-источнике
+    private void currentSelectedContentToClipboard(boolean deleteFromSource) {
+        File[] fileList = currentExplorerPane.getSelectedElements();
+        if (fileList.length == 0) return;
+        File root = currentExplorerPane.getCurrentDirectory();
+        ClipboardContent clipboardContent = new ClipboardContent(root, fileList, deleteFromSource);
+        Clipboard clipboard = MainClass.getClipboard();
+        clipboard.put(clipboardContent);
+    }
+
+    //Метод управляет доступностью элементов "вставить" в зависимости от того, есть в буфере обмена данные или нет
+    private void setEnabledPasteComponents() {
+        Clipboard clipboard = MainClass.getClipboard();
+        pasteBtn.setEnabled(!clipboard.isEmpty());
+        pasteItem.setEnabled(!clipboard.isEmpty());
+        pastePopupItem.setEnabled(!clipboard.isEmpty());
+    }
 
 }
