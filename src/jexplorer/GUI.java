@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
 public class GUI {
 
@@ -670,7 +671,40 @@ public class GUI {
     private ActionListener renameListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Переименовать...");
+            File[] files = currentExplorerPane.getSelectedElements();
+            if (files.length==0)return;
+
+            String name="";
+            if (files.length==1){
+                name=files[0].getName();
+            }
+
+            name=JOptionPane.showInputDialog(frm, "Введите новое имя", name);
+            if (name==null)return;
+            name=name.trim();
+
+            File root = currentExplorerPane.getCurrentDirectory();
+            Renamer renamer=MainClass.getRenamer();
+            ResultSet resultSet;
+            try {
+                resultSet = renamer.rename(root, files, name);
+            } catch (Exception ex) {
+                showErrorDialog(ex.getMessage());
+                return;
+            }
+
+            //Обработка ошибок переименования
+            if (!resultSet.isErrFileListEmpty()){
+                JLabel lab = new JLabel();
+                String text = "<html>Следующие объекты переименовать не удалось:";
+                for (File file : resultSet.getErrFile()) {
+                    text += "<br>" + file.getAbsolutePath();
+                }
+                lab.setText(text);
+                JOptionPane.showMessageDialog(frm, lab, "", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            currentExplorerPane.refreshContent();
         }
     };
 
@@ -693,7 +727,7 @@ public class GUI {
             }
 
             //Отображаем количество удаленных объектов
-            JOptionPane.showMessageDialog(frm, createResultPanel(resultSet), "Удалено", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(frm, createResultPanel(resultSet.getResult()), "Удалено", JOptionPane.INFORMATION_MESSAGE);
 
             currentExplorerPane.refreshContent();
         }
@@ -730,24 +764,24 @@ public class GUI {
             }
 
             //Отображаем список свойств
-            JOptionPane.showMessageDialog(frm, createResultPanel(resultSet), "Свойства", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(frm, createResultPanel(resultSet.getResult()), "Свойства", JOptionPane.INFORMATION_MESSAGE);
 
         }
     };
 
-    private JPanel createResultPanel(ResultSet resultSet){
+    private JPanel createResultPanel(List<String> resultList){
         String name;
         String value;
         int pos;
         JPanel resultPane = new JPanel();
         resultPane.setLayout(new GridLayout(0, 1));
-        for (String property : resultSet.getResult()) {
+        for (String str : resultList) {
             Box line = Box.createHorizontalBox();
             JLabel nameLab = new JLabel();
             JLabel valueLab = new JLabel();
-            pos = property.indexOf('*');
-            name = property.substring(0, pos);
-            value = property.substring(pos + 1, property.length());
+            pos = str.indexOf('*');
+            name = str.substring(0, pos);
+            value = str.substring(pos + 1, str.length());
             nameLab.setText(name);
             valueLab.setText(value);
             line.add(nameLab);
