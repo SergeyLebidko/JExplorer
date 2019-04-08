@@ -97,6 +97,14 @@ public class GUI {
     private JMenuItem deletePopupItem;
     private JMenuItem propertiesPopupItem;
 
+    private final int COPY_DIALOG_WIDTH = 500;
+    private final int COPY_DIALOG_HEIGHT = 150;
+
+    private JDialog copyDialog;
+    private JLabel currentCopyFileLab;
+    private JProgressBar fileCopyProgressBar;
+    private JButton stopCopyBtn;
+
     public GUI() {
 
         //Заменяем текущий Look and Feel системным
@@ -457,6 +465,41 @@ public class GUI {
         deleteBtn.addActionListener(deleteListener);
         propertiesBtn.addActionListener(propertiesListener);
 
+        //Создаем диалог копирования файлов
+        copyDialog = new JDialog(frm, true);
+        copyDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        copyDialog.setSize(new Dimension(COPY_DIALOG_WIDTH, COPY_DIALOG_HEIGHT));
+        copyDialog.setResizable(false);
+
+        currentCopyFileLab = new JLabel();
+        fileCopyProgressBar = new JProgressBar();
+        stopCopyBtn = new JButton("Отмена");
+
+        JPanel dialogPane = new JPanel();
+        dialogPane.setLayout(new GridLayout(0, 1));
+        dialogPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        Box box1 = Box.createHorizontalBox();
+        Box box2 = Box.createHorizontalBox();
+        Box box3 = Box.createHorizontalBox();
+        box1.add(currentCopyFileLab);
+        box1.add(Box.createHorizontalGlue());
+        box2.add(fileCopyProgressBar);
+        box3.add(Box.createHorizontalGlue());
+        box3.add(stopCopyBtn);
+        dialogPane.add(box1);
+        dialogPane.add(box2);
+        dialogPane.add(box3);
+        copyDialog.setContentPane(dialogPane);
+
+        stopCopyBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Copier copier = MainClass.getCopier();
+                copier.stop();
+                copyDialog.setVisible(false);
+            }
+        });
+
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
         contentPane.add(fPane, BorderLayout.CENTER);
@@ -659,11 +702,26 @@ public class GUI {
     private ActionListener pasteListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Операция \"вставить\"...");
-
+            //Устанавливаем параметры копирования
             Copier copier = MainClass.getCopier();
-            copier.copy(currentExplorerPane.getCurrentDirectory());
+            copier.setStartParameters(currentExplorerPane.getCurrentDirectory());
 
+            //Устанавливаем расположение диалога копирования по центру окна
+            int xPos = frm.getLocation().x + (frm.getWidth() / 2) - (COPY_DIALOG_WIDTH / 2);
+            int yPos = frm.getLocation().y + (frm.getHeight() / 2) - (COPY_DIALOG_HEIGHT / 2);
+            copyDialog.setLocation(xPos, yPos);
+
+            //Запускаем поток копирования
+            Thread trd = new Thread(copier);
+            trd.start();
+
+            //Выводим диалог копирования на экран (в модальном режиме)
+            copyDialog.setVisible(true);
+
+            System.out.println("После закрытия диалога копирования...");
+
+            //Обновляем элементы интерфейса после завершения копирования
+            currentExplorerPane.refreshContent();
             setEnabledPasteComponents();
         }
     };
@@ -672,19 +730,19 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             File[] files = currentExplorerPane.getSelectedElements();
-            if (files.length==0)return;
+            if (files.length == 0) return;
 
-            String name="";
-            if (files.length==1){
-                name=files[0].getName();
+            String name = "";
+            if (files.length == 1) {
+                name = files[0].getName();
             }
 
-            name=JOptionPane.showInputDialog(frm, "Введите новое имя", name);
-            if (name==null)return;
-            name=name.trim();
+            name = JOptionPane.showInputDialog(frm, "Введите новое имя", name);
+            if (name == null) return;
+            name = name.trim();
 
             File root = currentExplorerPane.getCurrentDirectory();
-            Renamer renamer=MainClass.getRenamer();
+            Renamer renamer = MainClass.getRenamer();
             ResultSet resultSet;
             try {
                 resultSet = renamer.rename(root, files, name);
@@ -694,7 +752,7 @@ public class GUI {
             }
 
             //Обработка ошибок переименования
-            if (!resultSet.isErrFileListEmpty()){
+            if (!resultSet.isErrFileListEmpty()) {
                 JLabel lab = new JLabel();
                 String text = "<html>Следующие объекты переименовать не удалось:";
                 for (File file : resultSet.getErrFile()) {
@@ -712,11 +770,11 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             File[] removeList = currentExplorerPane.getSelectedElements();
-            if (removeList.length==0)return;
+            if (removeList.length == 0) return;
             Remover remover = MainClass.getRemover();
             ResultSet resultSet = remover.remove(removeList);
 
-            if (!resultSet.isErrFileListEmpty()){
+            if (!resultSet.isErrFileListEmpty()) {
                 JLabel lab = new JLabel();
                 String text = "<html>Следующие объекты удалить не удалось:";
                 for (File file : resultSet.getErrFile()) {
@@ -769,7 +827,7 @@ public class GUI {
         }
     };
 
-    private JPanel createResultPanel(List<String> resultList){
+    private JPanel createResultPanel(List<String> resultList) {
         String name;
         String value;
         int pos;
@@ -810,6 +868,16 @@ public class GUI {
         pasteBtn.setEnabled(!clipboard.isEmpty());
         pasteItem.setEnabled(!clipboard.isEmpty());
         pastePopupItem.setEnabled(!clipboard.isEmpty());
+    }
+
+    //Ниже идет группа методов, необходимых для взаимодействия потока копирования файлов с потоком GUI
+    public void setCopyDialoTitle(String title) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                copyDialog.setTitle(title);
+            }
+        });
     }
 
 }
