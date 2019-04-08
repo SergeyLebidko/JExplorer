@@ -480,15 +480,13 @@ public class GUI {
         dialogPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         Box box1 = Box.createHorizontalBox();
         Box box2 = Box.createHorizontalBox();
-        Box box3 = Box.createHorizontalBox();
         box1.add(currentCopyFileLab);
         box1.add(Box.createHorizontalGlue());
-        box2.add(fileCopyProgressBar);
-        box3.add(Box.createHorizontalGlue());
-        box3.add(stopCopyBtn);
+        box2.add(Box.createHorizontalGlue());
+        box2.add(stopCopyBtn);
         dialogPane.add(box1);
+        dialogPane.add(fileCopyProgressBar);
         dialogPane.add(box2);
-        dialogPane.add(box3);
         copyDialog.setContentPane(dialogPane);
 
         stopCopyBtn.addActionListener(new ActionListener() {
@@ -704,7 +702,7 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             //Устанавливаем параметры копирования
             Copier copier = MainClass.getCopier();
-            copier.setStartParameters(currentExplorerPane.getCurrentDirectory());
+            copier.setDestinationDir(currentExplorerPane.getCurrentDirectory());
 
             //Устанавливаем расположение диалога копирования по центру окна
             int xPos = frm.getLocation().x + (frm.getWidth() / 2) - (COPY_DIALOG_WIDTH / 2);
@@ -871,13 +869,59 @@ public class GUI {
     }
 
     //Ниже идет группа методов, необходимых для взаимодействия потока копирования файлов с потоком GUI
-    public void setCopyDialoTitle(String title) {
+    public void setCopyDialogTitle(String title) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 copyDialog.setTitle(title);
             }
         });
+    }
+
+    public int showConflictDialog(String conflictDescription) {
+        class Answer implements Runnable {
+
+            int result;
+            String msg;
+
+            public Answer(String msg) {
+                this.msg = msg;
+            }
+
+            @Override
+            public void run() {
+                JPanel pane = new JPanel();
+                pane.setLayout(new GridLayout(0, 1));
+                Box box = Box.createHorizontalBox();
+                JLabel lab = new JLabel(msg);
+                JCheckBox defaultActionCheckBox = new JCheckBox("Применить это действие в случае всех последующих конфликтов", false);
+                box.add(lab);
+                box.add(Box.createHorizontalGlue());
+                pane.add(box);
+                pane.add(defaultActionCheckBox);
+                int answer = 0;
+                do {
+                    result = JOptionPane.showConfirmDialog(copyDialog, pane, "", JOptionPane.YES_NO_OPTION);
+                } while (result == JOptionPane.CLOSED_OPTION);
+                if (answer == JOptionPane.YES_OPTION & !defaultActionCheckBox.isSelected()) result = Copier.REPLACE;
+                if (answer == JOptionPane.YES_OPTION & defaultActionCheckBox.isSelected()) result = Copier.REPLACE_ALL;
+                if (answer == JOptionPane.NO_OPTION & !defaultActionCheckBox.isSelected()) result = Copier.SKIP;
+                if (answer == JOptionPane.NO_OPTION & defaultActionCheckBox.isSelected()) result = Copier.SKIP_ALL;
+            }
+
+            int getResult() {
+                return result;
+            }
+
+        }
+        Answer answer = new Answer(conflictDescription);
+
+        try {
+            SwingUtilities.invokeAndWait(answer);
+        } catch (Exception e) {
+        }
+
+        return answer.getResult();
     }
 
 }
