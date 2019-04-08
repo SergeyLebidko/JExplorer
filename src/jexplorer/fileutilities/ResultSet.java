@@ -9,35 +9,45 @@ import java.util.List;
 public class ResultSet {
 
     private List<String> result;
-    private List<File> error;
+    private List<File> errFile;
+    private List<String> errText;
 
     public ResultSet() {
         result = new LinkedList<>();
-        error = new LinkedList<>();
+        errFile = new LinkedList<>();
+        errText = new LinkedList<>();
     }
 
     public void addResult(String name, String value){
         result.add(name+"*"+value);
     }
 
-    public void addError(File file){
-        error.add(file);
+    public void addErrFile(File file){
+        errFile.add(file);
+    }
+
+    public void addErrText(String name, String value){
+        errText.add(name+"*"+value);
     }
 
     public List<String> getResult() {
         return result;
     }
 
-    public List<File> getError() {
-        return error;
+    public List<File> getErrFile() {
+        return errFile;
     }
+
+    public List<String> getErrText(){return  errText;}
 
     public boolean isResultListEmpty(){
         return result.isEmpty();
     }
 
-    public boolean isErrorListEmpty(){
-        return  error.isEmpty();
+    public boolean isErrFileListEmpty(){
+        return  errFile.isEmpty();
     }
+
+    public boolean isErrTextListEmpty(){return errText.isEmpty();}
 
 }

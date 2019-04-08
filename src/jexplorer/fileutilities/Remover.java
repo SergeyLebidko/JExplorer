@@ -71,7 +71,7 @@ public class Remover {
 
             //Если удаляемый объект не существует
             if (!file.exists()){
-                resultSet.addError(file);
+                resultSet.addErrFile(file);
                 continue;
             }
 
@@ -83,7 +83,7 @@ public class Remover {
                     continue;
                 }
                 if (!success){
-                    resultSet.addError(file);
+                    resultSet.addErrFile(file);
                     continue;
                 }
             }
@@ -93,9 +93,9 @@ public class Remover {
                 try {
                     List<File> errorList = new LinkedList<>();
                     directoryWalker.remove(file, errorList);
-                    resultSet.getError().addAll(errorList);
+                    resultSet.getErrFile().addAll(errorList);
                 } catch (IOException e) {
-                    resultSet.addError(file);
+                    resultSet.addErrFile(file);
                     continue;
                 }
                 dirDeleteCount+=directoryWalker.getDirDeleteCount();

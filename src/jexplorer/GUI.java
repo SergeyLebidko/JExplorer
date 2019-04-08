@@ -1,6 +1,5 @@
 package jexplorer;
 
-import com.sun.tools.javac.Main;
 import jexplorer.fileexplorerclasses.FileSorter;
 import jexplorer.fileexplorerclasses.FileSystemExplorer;
 import jexplorer.fileexplorerclasses.SortTypes;
@@ -683,10 +682,10 @@ public class GUI {
             Remover remover = MainClass.getRemover();
             ResultSet resultSet = remover.remove(removeList);
 
-            if (!resultSet.isErrorListEmpty()){
+            if (!resultSet.isErrFileListEmpty()){
                 JLabel lab = new JLabel();
                 String text = "<html>Следующие объекты удалить не удалось:";
-                for (File file : resultSet.getError()) {
+                for (File file : resultSet.getErrFile()) {
                     text += "<br>" + file.getAbsolutePath();
                 }
                 lab.setText(text);
@@ -720,10 +719,10 @@ public class GUI {
             }
 
             //Выводим список объектов, свойства которых получить не удалось
-            if (!resultSet.isErrorListEmpty()) {
+            if (!resultSet.isErrFileListEmpty()) {
                 JLabel lab = new JLabel();
                 String text = "<html>Свойства следующих объектов получить не удалось:";
-                for (File file : resultSet.getError()) {
+                for (File file : resultSet.getErrFile()) {
                     text += "<br>" + file.getAbsolutePath();
                 }
                 lab.setText(text);

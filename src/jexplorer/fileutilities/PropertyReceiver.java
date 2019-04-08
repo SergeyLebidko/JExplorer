@@ -118,7 +118,7 @@ public class PropertyReceiver {
             long totalFileSize = 0;      //Общий размер файлов в группе
             for (File file : files) {
                 if (!file.exists()) {
-                    result.addError(file);
+                    result.addErrFile(file);
                     continue;
                 }
                 if (file.isFile()){
@@ -131,7 +131,7 @@ public class PropertyReceiver {
                     try {
                         directoryWalker.calculate(file);
                     }catch (Exception ex){
-                        result.addError(file);
+                        result.addErrFile(file);
                         continue;
                     }
                     fileCount+=directoryWalker.getFileCount();
