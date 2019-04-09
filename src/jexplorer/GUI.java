@@ -702,7 +702,7 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             //Устанавливаем параметры копирования
             Copier copier = MainClass.getCopier();
-            copier.setDestinationDir(currentExplorerPane.getCurrentDirectory());
+            copier.initialCopier(currentExplorerPane.getCurrentDirectory());
 
             //Устанавливаем расположение диалога копирования по центру окна
             int xPos = frm.getLocation().x + (frm.getWidth() / 2) - (COPY_DIALOG_WIDTH / 2);
@@ -922,6 +922,15 @@ public class GUI {
         }
 
         return answer.getResult();
+    }
+
+    public void closeCopyDialog(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                copyDialog.setVisible(false);
+            }
+        });
     }
 
 }
