@@ -161,7 +161,7 @@ public class Copier implements Runnable {
         }
 
         //Закрываем диалог копирования
-        gui.closeCopyDialog();
+        //gui.closeCopyDialog();
 
         test();
     }

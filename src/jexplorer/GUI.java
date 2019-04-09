@@ -98,11 +98,12 @@ public class GUI {
     private JMenuItem propertiesPopupItem;
 
     private final int COPY_DIALOG_WIDTH = 500;
-    private final int COPY_DIALOG_HEIGHT = 150;
+    private final int COPY_DIALOG_HEIGHT = 220;
 
     private JDialog copyDialog;
     private JLabel currentCopyFileLab;
     private JProgressBar fileCopyProgressBar;
+    private JProgressBar totalCopyProgress;
     private JButton stopCopyBtn;
 
     public GUI() {
@@ -473,20 +474,32 @@ public class GUI {
 
         currentCopyFileLab = new JLabel();
         fileCopyProgressBar = new JProgressBar();
+        fileCopyProgressBar.setMinimum(0);
+        fileCopyProgressBar.setMaximum(100);
+        totalCopyProgress = new JProgressBar();
+        totalCopyProgress.setMinimum(0);
+        totalCopyProgress.setMaximum(100);
         stopCopyBtn = new JButton("Отмена");
 
         JPanel dialogPane = new JPanel();
-        dialogPane.setLayout(new GridLayout(0, 1));
+        dialogPane.setLayout(new GridLayout(0, 1,5,6));
         dialogPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         Box box1 = Box.createHorizontalBox();
         Box box2 = Box.createHorizontalBox();
+        Box box3 = Box.createHorizontalBox();
+
         box1.add(currentCopyFileLab);
         box1.add(Box.createHorizontalGlue());
+        box2.add(new JLabel("Общий прогресс"));
         box2.add(Box.createHorizontalGlue());
-        box2.add(stopCopyBtn);
+        box3.add(Box.createHorizontalGlue());
+        box3.add(stopCopyBtn);
+
         dialogPane.add(box1);
         dialogPane.add(fileCopyProgressBar);
         dialogPane.add(box2);
+        dialogPane.add(totalCopyProgress);
+        dialogPane.add(box3);
         copyDialog.setContentPane(dialogPane);
 
         stopCopyBtn.addActionListener(new ActionListener() {
@@ -878,7 +891,42 @@ public class GUI {
         });
     }
 
-    public int showConflictDialog(String conflictDescription) {
+    public void setCurrentCopyFileName(String fileName){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                currentCopyFileLab.setText(fileName);
+            }
+        });
+    }
+
+    public void setCurrentCopyProgress(int progress){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int value;
+                value=progress;
+                if (progress<0)value=0;
+                if (progress>100)value=100;
+                fileCopyProgressBar.setValue(value);
+            }
+        });
+    }
+
+    public void setTotalCopyProgress(int progress){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int value;
+                value=progress;
+                if (progress<0)value=0;
+                if (progress>100)value=100;
+                totalCopyProgress.setValue(value);
+            }
+        });
+    }
+
+    public int showCopyConflictDialog(String conflictDescription) {
         class Answer implements Runnable {
 
             int result;
@@ -924,7 +972,7 @@ public class GUI {
         return answer.getResult();
     }
 
-    public void closeCopyDialog(){
+    public void closeCopyDialog() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
