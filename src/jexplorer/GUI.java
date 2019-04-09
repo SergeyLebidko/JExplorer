@@ -490,7 +490,7 @@ public class GUI {
 
         box1.add(currentCopyFileLab);
         box1.add(Box.createHorizontalGlue());
-        box2.add(new JLabel("Общий прогресс"));
+        box2.add(new JLabel("Общий прогресс:"));
         box2.add(Box.createHorizontalGlue());
         box3.add(Box.createHorizontalGlue());
         box3.add(stopCopyBtn);
@@ -722,14 +722,16 @@ public class GUI {
             int yPos = frm.getLocation().y + (frm.getHeight() / 2) - (COPY_DIALOG_HEIGHT / 2);
             copyDialog.setLocation(xPos, yPos);
 
+            //Устанавливаем значения индикаторов прогресса
+            fileCopyProgressBar.setValue(0);
+            totalCopyProgress.setValue(0);
+
             //Запускаем поток копирования
             Thread trd = new Thread(copier);
             trd.start();
 
             //Выводим диалог копирования на экран (в модальном режиме)
             copyDialog.setVisible(true);
-
-            System.out.println("После закрытия диалога копирования...");
 
             //Обновляем элементы интерфейса после завершения копирования
             currentExplorerPane.refreshContent();
@@ -796,7 +798,9 @@ public class GUI {
             }
 
             //Отображаем количество удаленных объектов
-            JOptionPane.showMessageDialog(frm, createResultPanel(resultSet.getResult()), "Удалено", JOptionPane.INFORMATION_MESSAGE);
+            if (!resultSet.isResultListEmpty()){
+                JOptionPane.showMessageDialog(frm, createResultPanel(resultSet.getResult()), "Удалено", JOptionPane.INFORMATION_MESSAGE);
+            }
 
             currentExplorerPane.refreshContent();
         }
@@ -900,7 +904,7 @@ public class GUI {
         });
     }
 
-    public void setCurrentCopyProgress(int progress){
+    public void setFileProgress(int progress){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -913,7 +917,7 @@ public class GUI {
         });
     }
 
-    public void setTotalCopyProgress(int progress){
+    public void setTotalProgress(int progress){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
