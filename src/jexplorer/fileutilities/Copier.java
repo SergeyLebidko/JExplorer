@@ -125,6 +125,12 @@ public class Copier implements Runnable {
     private class Element {
         File src;
         File dest;
+        boolean isSuccessfulCopy;
+
+        public Element() {
+            isSuccessfulCopy = false;
+        }
+
     }
 
     private FileSystemExplorer fileSystemExplorer;
@@ -225,31 +231,31 @@ public class Copier implements Runnable {
 
             //Проверяем конфликты
             if (element.dest.exists() & element.dest.isFile()) {
-                if (actionOnConflict==UNDEFINED_BEHAVIOR){
+                if (actionOnConflict == UNDEFINED_BEHAVIOR) {
                     actionOnConflict = gui.showCopyConflictDialog("Файл " + element.dest + " уже существует в папке назначения");
                 }
-                switch (actionOnConflict){
-                    case SKIP:{
-                        actionOnConflict=UNDEFINED_BEHAVIOR;
+                switch (actionOnConflict) {
+                    case SKIP: {
+                        actionOnConflict = UNDEFINED_BEHAVIOR;
                         continue;
                     }
-                    case SKIP_ALL:{
+                    case SKIP_ALL: {
                         continue;
                     }
-                    case REPLACE:{
-                        actionOnConflict=UNDEFINED_BEHAVIOR;
+                    case REPLACE: {
+                        actionOnConflict = UNDEFINED_BEHAVIOR;
                         break;
                     }
-                    case REPLACE_ALL:{
+                    case REPLACE_ALL: {
                         break;
                     }
-                    case SAVE_BOTH:{
-                        element.dest=getNextName(element.dest);
-                        actionOnConflict=UNDEFINED_BEHAVIOR;
+                    case SAVE_BOTH: {
+                        element.dest = getNextName(element.dest);
+                        actionOnConflict = UNDEFINED_BEHAVIOR;
                         break;
                     }
-                    case SAVE_BOTH_ALL:{
-                        element.dest=getNextName(element.dest);
+                    case SAVE_BOTH_ALL: {
+                        element.dest = getNextName(element.dest);
                     }
                 }
             }
@@ -287,9 +293,12 @@ public class Copier implements Runnable {
                 } catch (Exception ex) {
                     resultSet.addErrText("Не удалось скопировать:", element.src.getAbsolutePath());
                 }
+                element.isSuccessfulCopy = true;
             }
             if (element.src.isDirectory()) {
-                element.dest.mkdirs();
+                if (element.dest.mkdirs()) {
+                    element.isSuccessfulCopy = true;
+                }
                 //Обновляем индикатор общего прогресса
                 totalProgressUpdater.update(1);
             }
@@ -297,15 +306,40 @@ public class Copier implements Runnable {
 
         //Если было активировано перемещение - удаляем источники
         if (isDeleteSourceList) {
-            Remover remover = MainClass.getRemover();
-            ResultSet removerResult = remover.remove(sourceList);
-            for (File file : removerResult.getErrFile()) {
-                resultSet.addErrText("Не удалось удалить источник", file.getAbsolutePath());
+            boolean isRemove=true;
+            while (isRemove){
+                isRemove=false;
+
+                //Вначале удаляем все файлы, коотрые были успешно скопированы
+                for (Element element: elements){
+                    if (element.src.isFile() & element.isSuccessfulCopy){
+                        element.isSuccessfulCopy=false;
+                        if (element.src.delete()){
+                            isRemove=true;
+                            continue;
+                        }
+                        resultSet.addErrText("Файл был скопирован, но удалить его в исходном местополежении не удалось:", element.src.getAbsolutePath());
+                    }
+                }
+
+                //Затем удаляем все папки, коорые были успешно скопированы
+                for (Element element: elements){
+                    if (element.src.isDirectory() & element.isSuccessfulCopy){
+                        element.isSuccessfulCopy = false;
+                        if (element.src.delete()){
+                            isRemove=true;
+                            continue;
+                        }
+                        resultSet.addErrText("Папка была скопирована, но удалить её в исходном местополежении не удалось:", element.src.getAbsolutePath());
+                    }
+                }
             }
         }
 
         //Закрываем диалог копирования
         gui.closeCopyDialog();
+
+        //test();
     }
 
     private File getNextName(File file) {
@@ -315,7 +349,7 @@ public class Copier implements Runnable {
         do {
             name = fileSystemExplorer.getFileName(result);
             if (name == null) {
-                name = file.getName();
+                name = result.getName();
             }
             ext = fileSystemExplorer.getFileExtension(result);
             if (ext == null) {
