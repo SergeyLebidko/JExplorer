@@ -62,9 +62,6 @@ public class Renamer {
                 }
                 dest = new File(root, name + "(" + getNextNum(file) + ")" + ext);
                 success = file.renameTo(dest);
-
-                System.out.println(file + "  --->  " + dest);
-
                 if (!success) {
                     result.addErrFile(file);
                 }

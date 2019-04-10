@@ -2,6 +2,7 @@ package jexplorer.fileutilities;
 
 import jexplorer.GUI;
 import jexplorer.MainClass;
+import jexplorer.fileexplorerclasses.FileSystemExplorer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,10 +20,13 @@ import java.util.List;
 
 public class Copier implements Runnable {
 
+    public static final int UNDEFINED_BEHAVIOR = 0;
     public static final int REPLACE = 1;
     public static final int SKIP = 2;
-    public static final int REPLACE_ALL = 3;
-    public static final int SKIP_ALL = 4;
+    public static final int SAVE_BOTH = 3;
+    public static final int REPLACE_ALL = 4;
+    public static final int SKIP_ALL = 5;
+    public static final int SAVE_BOTH_ALL = 6;
 
     private File destDir;
     private GUI gui;
@@ -38,7 +42,7 @@ public class Copier implements Runnable {
             try {
                 Files.walkFileTree(root.toPath(), this);
             } catch (IOException e) {
-                resultSet.addErrText("Не удалось получить доступ к", root.getPath());
+                resultSet.addErrText("Не удалось получить доступ к:", root.getPath());
                 return;
             }
             elements.addAll(tmpList);
@@ -123,6 +127,7 @@ public class Copier implements Runnable {
         File dest;
     }
 
+    private FileSystemExplorer fileSystemExplorer;
     private DirectoryWalker directoryWalker;
     private FileProgressUpdater fileProgressUpdater;
     private TotalProgressUpdater totalProgressUpdater;
@@ -131,6 +136,7 @@ public class Copier implements Runnable {
 
     public Copier() {
         elements = new LinkedList<>();
+        fileSystemExplorer = MainClass.getFileSystemExplorer();
         directoryWalker = new DirectoryWalker();
         fileProgressUpdater = new FileProgressUpdater();
         totalProgressUpdater = new TotalProgressUpdater();
@@ -160,7 +166,7 @@ public class Copier implements Runnable {
         //Формируем список источников
         for (File file : sourceList) {
             if (!file.exists()) {
-                resultSet.addErrText("Не удалось получить доступ к", file.getPath());
+                resultSet.addErrText("Не удалось получить доступ к:", file.getPath());
                 continue;
             }
             if (file.isFile()) {
@@ -181,21 +187,72 @@ public class Copier implements Runnable {
         }
 
         //Формируем список приемников
-        String sDir = sourceDir.getAbsolutePath();
-        String sFile;
-        for (Element element : elements) {
-            sFile = element.src.getAbsolutePath().substring(sDir.length());
-            element.dest = new File(destDir, sFile);
+        //Обычный случай: каталог-источник и каталог-приемник не совпадают
+        if (!destDir.equals(sourceDir)) {
+            String sDir = sourceDir.getAbsolutePath();
+            String sFile;
+            for (Element element : elements) {
+                sFile = element.src.getAbsolutePath().substring(sDir.length());
+                element.dest = new File(destDir, sFile);
+            }
         }
 
-        //Поверяем список приемников на совпадение с реально имеющимися файлами
+        //Особый случай: каталог-источник и каталог-приемник совпадают
+        if (destDir.equals(sourceDir)) {
+            String str1, str2, str3;
+            File fTmp;
+            for (Element element : elements) {
+                str2 = element.src.getAbsolutePath();
+                for (File file : sourceList) {
+                    str1 = file.getAbsolutePath();
+                    if (str2.startsWith(str1)) {
+                        fTmp = getNextName(file);
+                        str3 = str2.substring(str1.length());
+                        element.dest = new File(fTmp, str3);
+                        break;
+                    }
+                }
+            }
+        }
 
         //Инициализируем объект, который будет обновлять индикатор общего прогресса
         totalProgressUpdater.init();
 
         //Начинаем процесс копирования
         int readBytes;
+        int actionOnConflict = 0;
         for (Element element : elements) {
+
+            //Проверяем конфликты
+            if (element.dest.exists() & element.dest.isFile()) {
+                if (actionOnConflict==UNDEFINED_BEHAVIOR){
+                    actionOnConflict = gui.showCopyConflictDialog("Файл " + element.dest + " уже существует в папке назначения");
+                }
+                switch (actionOnConflict){
+                    case SKIP:{
+                        actionOnConflict=UNDEFINED_BEHAVIOR;
+                        continue;
+                    }
+                    case SKIP_ALL:{
+                        continue;
+                    }
+                    case REPLACE:{
+                        actionOnConflict=UNDEFINED_BEHAVIOR;
+                        break;
+                    }
+                    case REPLACE_ALL:{
+                        break;
+                    }
+                    case SAVE_BOTH:{
+                        element.dest=getNextName(element.dest);
+                        actionOnConflict=UNDEFINED_BEHAVIOR;
+                        break;
+                    }
+                    case SAVE_BOTH_ALL:{
+                        element.dest=getNextName(element.dest);
+                    }
+                }
+            }
 
             //Отображаем имя копируемого элемента
             gui.setCurrentCopyFileName("Копирую: " + element.src.getName());
@@ -206,7 +263,7 @@ public class Copier implements Runnable {
                      FileChannel channelDest = new FileOutputStream(element.dest).getChannel()) {
 
                     ByteBuffer buffer = ByteBuffer.allocate(4096);
-                    while ((readBytes = channelSrc.read(buffer))!=(-1)) {
+                    while ((readBytes = channelSrc.read(buffer)) != (-1)) {
 
                         //Записываем данные в файл-приемник
                         buffer.flip();
@@ -228,7 +285,7 @@ public class Copier implements Runnable {
                     }
 
                 } catch (Exception ex) {
-                    resultSet.addErrText("Не удалось скопировать", element.src.getAbsolutePath() + " ошибка: " + ex);
+                    resultSet.addErrText("Не удалось скопировать:", element.src.getAbsolutePath());
                 }
             }
             if (element.src.isDirectory()) {
@@ -249,6 +306,27 @@ public class Copier implements Runnable {
 
         //Закрываем диалог копирования
         gui.closeCopyDialog();
+    }
+
+    private File getNextName(File file) {
+        String name;
+        String ext;
+        File result = new File(file.getAbsolutePath());
+        do {
+            name = fileSystemExplorer.getFileName(result);
+            if (name == null) {
+                name = file.getName();
+            }
+            ext = fileSystemExplorer.getFileExtension(result);
+            if (ext == null) {
+                ext = "";
+            }
+            if (!ext.equals("")) {
+                ext = "." + ext;
+            }
+            result = new File(result.getParentFile(), name + " - копия" + ext);
+        } while (result.exists());
+        return result;
     }
 
     public ResultSet getResultSet() {

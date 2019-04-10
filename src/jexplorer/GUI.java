@@ -733,6 +733,17 @@ public class GUI {
             //Выводим диалог копирования на экран (в модальном режиме)
             copyDialog.setVisible(true);
 
+            //Выводим отчет об ошибках, возникших во время копирования
+            ResultSet resultSet=copier.getResultSet();
+            if (!resultSet.isErrTextListEmpty()){
+                JPanel listPane = createResultPanel(resultSet.getErrText());
+                JPanel pane = new JPanel();
+                pane.setLayout(new GridLayout(0,1));
+                pane.add(new JLabel("Во время копирования возникли следующие ошибки:"));
+                pane.add(listPane);
+                JOptionPane.showMessageDialog(frm, pane, "Внимание", JOptionPane.INFORMATION_MESSAGE);
+            }
+
             //Обновляем элементы интерфейса после завершения копирования
             currentExplorerPane.refreshContent();
             setEnabledPasteComponents();
@@ -944,21 +955,38 @@ public class GUI {
             public void run() {
                 JPanel pane = new JPanel();
                 pane.setLayout(new GridLayout(0, 1));
-                Box box = Box.createHorizontalBox();
                 JLabel lab = new JLabel(msg);
+                Box box = Box.createHorizontalBox();
+
+                JRadioButton replaceRadio = new JRadioButton("Заменить файл в папке назначения", true);
+                JRadioButton skipRadio=new JRadioButton("Не копировать файл");
+                JRadioButton saveBothRadio=new JRadioButton("Копировать и сохранить оба файла");
+                ButtonGroup bg = new ButtonGroup();
+                bg.add(replaceRadio);
+                bg.add(skipRadio);
+                bg.add(saveBothRadio);
                 JCheckBox defaultActionCheckBox = new JCheckBox("Применить это действие в случае всех последующих конфликтов", false);
+
                 box.add(lab);
                 box.add(Box.createHorizontalGlue());
+
                 pane.add(box);
+                pane.add(replaceRadio);
+                pane.add(skipRadio);
+                pane.add(saveBothRadio);
                 pane.add(defaultActionCheckBox);
-                int answer = 0;
+
+                int answer;
                 do {
-                    result = JOptionPane.showConfirmDialog(copyDialog, pane, "", JOptionPane.YES_NO_OPTION);
-                } while (result == JOptionPane.CLOSED_OPTION);
-                if (answer == JOptionPane.YES_OPTION & !defaultActionCheckBox.isSelected()) result = Copier.REPLACE;
-                if (answer == JOptionPane.YES_OPTION & defaultActionCheckBox.isSelected()) result = Copier.REPLACE_ALL;
-                if (answer == JOptionPane.NO_OPTION & !defaultActionCheckBox.isSelected()) result = Copier.SKIP;
-                if (answer == JOptionPane.NO_OPTION & defaultActionCheckBox.isSelected()) result = Copier.SKIP_ALL;
+                    answer = JOptionPane.showConfirmDialog(copyDialog, pane, "", (-1),JOptionPane.QUESTION_MESSAGE);
+                } while (answer == JOptionPane.CLOSED_OPTION);
+
+                if (replaceRadio.isSelected() & !defaultActionCheckBox.isSelected())result=Copier.REPLACE;
+                if (skipRadio.isSelected() & !defaultActionCheckBox.isSelected())result=Copier.SKIP;
+                if (saveBothRadio.isSelected() & !defaultActionCheckBox.isSelected())result=Copier.SAVE_BOTH;
+                if (replaceRadio.isSelected() & defaultActionCheckBox.isSelected())result=Copier.REPLACE_ALL;
+                if (skipRadio.isSelected() & defaultActionCheckBox.isSelected())result=Copier.SKIP_ALL;
+                if (saveBothRadio.isSelected() & defaultActionCheckBox.isSelected())result=Copier.SAVE_BOTH_ALL;
             }
 
             int getResult() {
