@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
 
@@ -511,6 +512,19 @@ public class GUI {
             }
         });
 
+        //Задаем горячие клавиши для пунктов меню
+        contentPane.setFocusable(false);
+        createFolderItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK, true));
+        deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.KEY_LOCATION_UNKNOWN));
+        propertiesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
+        selectAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,KeyEvent.CTRL_DOWN_MASK));
+        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
+        cutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
+        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
+        renameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+        aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,KeyEvent.KEY_LOCATION_UNKNOWN));
+
         //Добавляем вспомогательные панели в корневую панель
         contentPane.add(rPane, BorderLayout.WEST);
         contentPane.add(fPane, BorderLayout.CENTER);
@@ -698,6 +712,7 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             currentSelectedContentToClipboard(false);
+            setPasteToolTip(currentExplorerPane.getSelectedElements());
             setEnabledPasteComponents();
         }
     };
@@ -706,6 +721,7 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             currentSelectedContentToClipboard(true);
+            setPasteToolTip(currentExplorerPane.getSelectedElements());
             setEnabledPasteComponents();
         }
     };
@@ -745,6 +761,7 @@ public class GUI {
             }
 
             //Обновляем элементы интерфейса после завершения копирования
+            clearPasteToolTip();
             currentExplorerPane.refreshContent();
             setEnabledPasteComponents();
         }
@@ -886,6 +903,28 @@ public class GUI {
         ClipboardContent clipboardContent = new ClipboardContent(root, fileList, deleteFromSource);
         Clipboard clipboard = MainClass.getClipboard();
         clipboard.put(clipboardContent);
+    }
+
+    //Метод устанавливает подсказку для пунктов меню и кнопки "Вставить"
+    private void setPasteToolTip(File[] files){
+        if (files.length==0){
+            clearPasteToolTip();
+            return;
+        }
+        String toolTipText="<html>В буфере обмена:";
+        for (File file: files){
+            toolTipText+="<br>    "+file.getName();
+        }
+        pasteBtn.setToolTipText(toolTipText);
+        pasteItem.setToolTipText(toolTipText);
+        pastePopupItem.setToolTipText(toolTipText);
+    }
+
+    //Метод очищает подскахку для пунктов меню и кнопки "Вставить"
+    private void clearPasteToolTip(){
+        pasteBtn.setToolTipText("Вставить");
+        pasteItem.setToolTipText(null);
+        pastePopupItem.setToolTipText(null);
     }
 
     //Метод управляет доступностью элементов "вставить" в зависимости от того, есть в буфере обмена данные или нет

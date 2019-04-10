@@ -57,6 +57,7 @@ public class TableExplorerPane implements ExplorerPane {
 
         contentTable.addMouseListener(tableClickListener);
         contentTable.getTableHeader().addMouseListener(columnHeaderClickListener);
+        contentTable.setFocusable(false);
 
         refreshContent();
     }
