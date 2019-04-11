@@ -138,7 +138,7 @@ public class Copier implements Runnable {
     private FileProgressUpdater fileProgressUpdater;
     private TotalProgressUpdater totalProgressUpdater;
     private ResultSet resultSet;
-    private List<Element> elements;
+    private LinkedList<Element> elements;
 
     public Copier() {
         elements = new LinkedList<>();
@@ -306,32 +306,25 @@ public class Copier implements Runnable {
 
         //Если было активировано перемещение - удаляем источники
         if (isDeleteSourceList) {
-            boolean isRemove=true;
-            while (isRemove){
-                isRemove=false;
 
-                //Вначале удаляем все файлы, коотрые были успешно скопированы
-                for (Element element: elements){
-                    if (element.src.isFile() & element.isSuccessfulCopy){
-                        element.isSuccessfulCopy=false;
-                        if (element.src.delete()){
-                            isRemove=true;
-                            continue;
-                        }
-                        resultSet.addErrText("Файл был скопирован, но удалить его в исходном местополежении не удалось:", element.src.getAbsolutePath());
+            //Вначале удаляем все файлы, коотрые были успешно скопированы
+            for (Element element : elements) {
+                if (element.src.isFile() & element.isSuccessfulCopy) {
+                    if (element.src.delete()) {
+                        continue;
                     }
+                    resultSet.addErrText("Файл был скопирован, но удалить его в исходном местополежении не удалось:", element.src.getAbsolutePath());
                 }
+            }
 
-                //Затем удаляем все папки, коорые были успешно скопированы
-                for (Element element: elements){
-                    if (element.src.isDirectory() & element.isSuccessfulCopy){
-                        element.isSuccessfulCopy = false;
-                        if (element.src.delete()){
-                            isRemove=true;
-                            continue;
-                        }
-                        resultSet.addErrText("Папка была скопирована, но удалить её в исходном местополежении не удалось:", element.src.getAbsolutePath());
+            //Затем удаляем все папки, которые были успешно скопированы. В ходе удаления список очищается, но он нам более и не нужен
+            Element element;
+            while ((element=elements.pollLast())!=null){
+                if (element.src.isDirectory() & element.isSuccessfulCopy){
+                    if (element.src.delete()){
+                        continue;
                     }
+                    resultSet.addErrText("Папка была скопирована, но удалить её в исходном местополежении не удалось:", element.src.getAbsolutePath());
                 }
             }
         }
@@ -339,7 +332,6 @@ public class Copier implements Runnable {
         //Закрываем диалог копирования
         gui.closeCopyDialog();
 
-        //test();
     }
 
     private File getNextName(File file) {
@@ -369,24 +361,6 @@ public class Copier implements Runnable {
 
     synchronized public void stop() {
         isStoped = true;
-    }
-
-    private void test() {
-        System.out.println("Источники - Приемники:");
-        for (Element element : elements) {
-            System.out.print("    Источник: ");
-            System.out.println(element.src);
-            System.out.print("    Приемник: ");
-            System.out.println(element.dest);
-            System.out.println();
-        }
-        System.out.println("Ошибки");
-        for (String str : resultSet.getErrText()) {
-            System.out.println("    " + str);
-        }
-        System.out.println();
-        System.out.println("-------------------------------------------");
-        System.out.println();
     }
 
 }
