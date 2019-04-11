@@ -22,7 +22,7 @@ public class FileSystemExplorer {
         currentDirectory = getUserHomeDir();
     }
 
-    //Метод метод переходит в каталог directory. Возвращает false, если это не удалось
+    //Метод переходит в каталог directory. Возвращает false, если это не удалось
     public void openDirectory(File directory) throws Exception {
         if (directory.isFile()) return;
         if (!directory.exists() || !directory.canRead() || directory.listFiles() == null) {
